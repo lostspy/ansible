@@ -1,5 +1,6 @@
 - name: Host healthcheck
   hosts: all
+  become: true
   gather_facts: true
 
   tasks:
