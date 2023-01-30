@@ -5,24 +5,24 @@
 
   tasks:
     - name: Check system uptime
-      command: uptime
+      command: "uptime"
       register: uptime_result
-      failed_when: uptime_result.rc != 0
+      # failed_when: uptime_result.rc != 0
 
     - name: Check disk usage
-      command: df -h
+      command: "df -h"
       register: disk_usage_result
-      failed_when: disk_usage_result.rc != 0
+      #failed_when: disk_usage_result.rc != 0
 
     - name: Check memory usage
-      command: free -m
+      command: "free -m"
       register: memory_usage_result
-      failed_when: memory_usage_result.rc != 0
+      #failed_when: memory_usage_result.rc != 0
 
     - name: Check for running processes
-      command: ps -ef
+      command: "ps -ef"
       register: process_list_result
-      failed_when: process_list_result.rc != 0
+      #failed_when: process_list_result.rc != 0
 
     - name: Display results
       debug:
