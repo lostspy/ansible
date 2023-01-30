@@ -1,0 +1,34 @@
+- name: Demonstrate block, rescue and always
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Run a task with success
+      debug:
+        msg: Task ran successfully
+
+    - name: Run a task with failure
+      command: false
+      ignore_errors: yes
+      register: result
+
+    - block:
+      - name: Check if the previous task failed
+        debug:
+          msg: Task failed
+        when: result.rc != 0
+
+      - name: Task to run if previous task failed
+        debug:
+          msg: Running rescue task
+        tags: rescue
+
+    - rescue:
+      - name: Task to run if rescue is needed
+        debug:
+          msg: Running rescue task
+
+    - always:
+      - name: Task to always run
+        debug:
+          msg: Running always task

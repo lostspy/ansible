@@ -1,0 +1,32 @@
+- name: Host healthcheck
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Check system uptime
+      command: uptime
+      register: uptime_result
+      failed_when: uptime_result.rc != 0
+
+    - name: Check disk usage
+      command: df -h
+      register: disk_usage_result
+      failed_when: disk_usage_result.rc != 0
+
+    - name: Check memory usage
+      command: free -m
+      register: memory_usage_result
+      failed_when: memory_usage_result.rc != 0
+
+    - name: Check for running processes
+      command: ps -ef
+      register: process_list_result
+      failed_when: process_list_result.rc != 0
+
+    - name: Display results
+      debug:
+        var:
+          uptime_result: uptime_result.stdout_lines
+          disk_usage_result: disk_usage_result.stdout_lines
+          memory_usage_result: memory_usage_result.stdout_lines
+          process_list_result: process_list_result.stdout_lines

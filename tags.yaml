@@ -1,0 +1,20 @@
+- name: Example playbook with tags
+  hosts: all
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Task 1
+      debug:
+        msg: Task 1 executed
+      tags: task1
+
+    - name: Task 2
+      debug:
+        msg: Task 2 executed
+      tags: task2
+
+    - name: Task 3
+      debug:
+        msg: Task 3 executed
+      tags: task3
