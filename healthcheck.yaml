@@ -26,4 +26,4 @@
 
     - name: Display results
       debug:
-        msg: "{{ uptime_result.stdout_lines }}"
+        msg: "{{ uptime_result.stdout }}"
