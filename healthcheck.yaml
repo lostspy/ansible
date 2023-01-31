@@ -26,8 +26,4 @@
 
     - name: Display results
       debug:
-        var:
-          uptime_result: uptime_result.stdout_lines
-          disk_usage_result: disk_usage_result.stdout_lines
-          memory_usage_result: memory_usage_result.stdout_lines
-          process_list_result: process_list_result.stdout_lines
+        msg: "{{ uptime_result.stdout_lines }}"
