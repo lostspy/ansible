@@ -1,0 +1,22 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Get node IPs
+      shell: oc get node -o jsonpath='{range .items[*]}{.status.addresses[?(@.type=="InternalIP")].address}{"\n"}{end}' 
+      register: node_info
+
+    - name: Extract node IPs
+      add_host:
+        name: "{{ item }}"
+        group: ocp
+      with_items: "{{ node_info.stdout_lines }}"
+
+
+
+- name: pinging the servers
+  hosts: ocp
+  become: false
+  tasks:
+    - name: ping the systems
+      ping:
+
