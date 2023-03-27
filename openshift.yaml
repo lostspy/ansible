@@ -4,6 +4,7 @@
     - name: Get node IPs
       shell: oc get node -o jsonpath='{range .items[*]}{.status.addresses[?(@.type=="InternalIP")].address}{"\n"}{end}' 
       register: node_info
+      delegate_to: localhost
 
     - name: Extract node IPs
       add_host:
