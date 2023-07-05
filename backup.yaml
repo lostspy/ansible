@@ -1,0 +1,54 @@
+- name: Check directories and create symlink
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    backup_dir: /root/
+
+  tasks:
+    - name: Check if directories exist and write to file
+      find:
+        paths: "{{ backup_dir }}"
+        file_type: directory
+      register: backup_dirs
+
+    - name: Create a temporary file with directory list
+      shell: touch /tmp/file.txt
+
+    - name: Write directories to temporary file
+      copy:
+        dest: "/tmp/file.txt"
+        content: |
+          {% for item in backup_dirs.files %}
+          {{ item.path }}
+          {% endfor %}
+
+    - name: check the output of the file
+      shell: cat /tmp/file.txt
+      register: data
+
+    - name: Extract lines
+      set_fact:
+        lines: "{{ data.stdout_lines }}"
+
+    - name: Check the condition stat
+      stat:
+        path: /tmp/file.txt
+      register: condition_result
+
+    - name: Display options to the user
+      pause:
+        prompt: |
+          The condition is met. Please choose an option:
+          {% for option in lines %}
+          {{ loop.index }}. {{ option }}
+          {% endfor %}
+        echo: yes
+      register: user_choice
+      when: condition_result.stat.exists
+
+    - name: Create symlink for chosen directory
+      file:
+        src: "{{ user_choice.user_input }}"
+        dest: "/tmp/syslink"
+        state: link
