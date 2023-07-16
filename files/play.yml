@@ -9,4 +9,4 @@
     
     - name: debug the data file
       debug:
-        msg: "{{ data }}"
+        msg: "{{ data.split('\n') }}"
