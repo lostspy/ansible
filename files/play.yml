@@ -1,0 +1,12 @@
+---
+- name: check the file and import the data
+  hosts: localhost
+  become: false
+  tasks:
+    - name: import the file into variable
+      set_fact:
+        data: "{{ lookup('ansible.builtin.file', 'file.txt')}}"
+    
+    - name: debug the data file
+      debug:
+        msg: "{{ data }}"
