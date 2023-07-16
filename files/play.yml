@@ -10,3 +10,8 @@
     - name: debug the data file
       debug:
         msg: "{{ data.split('\n') }}"
+
+    - name: check if the data is available
+      debug:
+        msg: success
+      when: "value in data.split('\n')"
