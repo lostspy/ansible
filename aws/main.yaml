@@ -5,7 +5,7 @@
   gather_facts: no
   vars_files: var.yaml
   tasks:
-      - name: Use a role from the custom collection
+    - name: Use a role from the custom collection
       import_role:
         name: community.general
         
