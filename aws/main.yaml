@@ -5,6 +5,10 @@
   gather_facts: no
   vars_files: var.yaml
   tasks:
+      - name: Use a role from the custom collection
+      import_role:
+        name: community.general
+        
     - name: Create a new VPC 
       amazon.aws.ec2_vpc_net:
         name: "Ansible-Test"
