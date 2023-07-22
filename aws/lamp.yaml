@@ -41,15 +41,6 @@
         state: started
         enabled: yes
 
-    - name: Secure MySQL installation (optional but recommended)
-      mysql_user:
-        name: root
-        host: localhost
-        password: redhat
-        login_user: root
-        login_password: ''
-        priv: "*.*:ALL,GRANT"
-
     - name: Copy PHP info file
       copy:
         content: "<?php phpinfo(); ?>"
