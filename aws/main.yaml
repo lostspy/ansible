@@ -1,0 +1,97 @@
+---
+- name: Provision EC2 instance
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files: var.yaml
+  tasks:
+    - name: Create EC2 instance
+      ec2_instance:
+        region: "{{ region }}"
+        instance_type: "{{ instance_type }}"
+        image_id: "{{ ami_id }}"
+        key_name: "{{ key_name }}"
+        group_id: "{{ security_group }}"
+        subnet_id: "{{ subnet_id }}"
+        assign_public_ip: yes
+        wait: yes
+      register: ec2_instance_info
+
+    - name: Add EC2 instance to host group
+      add_host:
+        name: "{{ ec2_instance_info.instances[0].public_ip }}"
+        groups: jenkins_host
+
+- name: Install Jenkins server and configure weather-all project
+  hosts: jenkins_host
+  remote_user: ec2-user
+  become: yes
+
+  tasks:
+    - name: Install Java
+      yum:
+        name: java-11-openjdk
+        state: present
+
+    - name: Install Jenkins
+      yum:
+        name: jenkins
+        state: present
+
+    - name: Start Jenkins service
+      service:
+        name: jenkins
+        state: started
+        enabled: yes
+
+    - name: Wait for Jenkins to start
+      uri:
+        url: http://localhost:8080
+        method: GET
+      register: response
+      until: response.status == 200
+      retries: 30
+      delay: 10
+
+    - name: Get Jenkins initial admin password
+      shell: "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
+      register: jenkins_admin_password
+
+    - name: Print Jenkins initial admin password
+      debug:
+        var: jenkins_admin_password.stdout_lines
+
+    - name: Install Jenkins plugins
+      community.general.jenkins_plugin:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - git
+        - pipeline
+        - pipeline-model-definition
+        - pipeline-utility-steps
+        - ws-cleanup
+
+    - name: Create Jenkins pipeline job
+      community.general.jenkins_job:
+        config: "{{ lookup('file', 'weather_all_job.xml') }}"
+        name: "weather-all"
+        state: present
+
+    - name: Restart Jenkins service
+      service:
+        name: jenkins
+        state: restarted
+
+- name: Clean up EC2 instance
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Terminate EC2 instance
+      ec2_instance:
+        region: "{{ region }}"
+        state: absent
+        instance_ids: "{{ ec2_instance_info.instances[0].id }}"
+      when: ec2_instance_info is defined
