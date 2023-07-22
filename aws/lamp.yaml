@@ -1,0 +1,66 @@
+---
+- hosts: aws_ec2
+  become: yes
+  tasks:
+    - name: Install Apache
+      package:
+        name: httpd
+        state: latest
+
+    - name: Start and enable Apache
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Install PHP and required modules
+      package:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - php
+        - php-mysqlnd
+        - php-gd
+        - php-opcache
+        - php-xml
+        - php-mbstring
+
+    - name: Restart Apache
+      service:
+        name: httpd
+        state: restarted
+
+    - name: Install MySQL server
+      package:
+        name: mariadb-server
+        state: latest
+
+    - name: Start and enable MySQL
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+
+    - name: Secure MySQL installation (optional but recommended)
+      mysql_user:
+        name: root
+        host: localhost
+        password: redhat
+        login_user: root
+        login_password: ''
+        priv: "*.*:ALL,GRANT"
+
+    - name: Copy PHP info file
+      copy:
+        content: "<?php phpinfo(); ?>"
+        dest: /var/www/html/info.php
+
+    - name: Ensure firewalld allows HTTP traffic (port 80)
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+
+    - name: Reload firewalld to apply changes
+      shell: firewall-cmd --reload
+      ignore_errors: yes
