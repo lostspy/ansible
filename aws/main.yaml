@@ -9,15 +9,11 @@
       amazon.aws.ec2_vpc_net:
         name: "Ansible-Test"
         cidr_block: "{{ cidr_block }}"
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
         region: "{{ region }}"
       register: vpc
 
     - name: Create a new Subnet
       amazon.aws.ec2_vpc_subnet:
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
         cidr: "{{ cidr }}"
         region: "{{ region }}"
         vpc_id: "{{ vpc.vpc.id }}"
@@ -27,8 +23,6 @@
       amazon.aws.ec2_security_group:
         name: "Ansible-Test-Security-Group"
         description: "Ansible-Testing"
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
         vpc_id: "{{ vpc.vpc.id }}"
         region: "{{ region }}"
         rules:
@@ -44,8 +38,6 @@
       amazon.aws.ec2_instance:
         name: "Jenkins-Ansible"
         key_name: "{{ key_name }}"
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
         vpc_subnet_id: "{{ subnet.subnet.id }}"
         instance_type: "{{ instance_type }}"
         security_group: "{{ security_group.group_id  }}"
