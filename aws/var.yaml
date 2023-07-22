@@ -1,6 +1,6 @@
 ---
 region: "ap-south-1"
-instance_type: "c6.xlarge"
+instance_type: "c6i.xlarge"
 ami: "ami-0473875c7d7bfa840"  # Replace with the desired AMI ID for your region
 key_name: "ansible-demo"  # Replace with your EC2 key pair name
 cidr_block: "10.10.0.0/16"
