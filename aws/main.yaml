@@ -48,8 +48,3 @@
           assign_public_ip: true
         image_id: "{{ ami }}"
       register: ec2_instance_info
-
-    - name: Add EC2 instance to host group
-      add_host:
-        name: "{{ ec2_instance_info.instances[0].public_ip }}"
-        groups: jenkins_host
