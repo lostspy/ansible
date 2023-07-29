@@ -1,0 +1,12 @@
+---
+- name: check aap2 host filters
+  hosts: localhost
+  gather_facts: true
+  tasks:
+    - name: print the ipv4 addresses
+      debug:
+        msg: "Server: {{ ansible_facts['fqdn'] }} at {{ ansible_facts['default_ipv4']['address'] }}"
+
+    - name: print some more facts
+      debug:
+        msg: "ansible_facts['dns']['nameservers']"
