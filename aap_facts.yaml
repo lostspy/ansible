@@ -1,6 +1,6 @@
 ---
 - name: check aap2 host filters
-  hosts: localhost
+  hosts: all
   gather_facts: true
   tasks:
     - name: print the ipv4 addresses
