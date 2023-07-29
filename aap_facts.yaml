@@ -7,6 +7,47 @@
       debug:
         msg: "Server: {{ ansible_facts['fqdn'] }} at {{ ansible_facts['default_ipv4']['address'] }}"
 
-    - name: print some more facts
+    - name: print nameservers
       debug:
-        msg: "ansible_facts['dns']['nameservers']"
+        msg: "{{ ansible_facts['dns']['nameservers'] }}"
+
+    - name: Print the default ipv4 address facts
+      debug:
+        msg: "{{ ansible_default_ipv4 }}"
+
+    - name: Set address and network facts
+      ansible.builtin.set_fact:
+        ipv4_addr: "{{ ansible_facts['default_ipv4']['address'] }}"
+        ipv4_subnet: "{{ ansible_facts['default_ipv4']['netmask'] }}"
+
+    - name: Set facts derived from ipv4_addr and ipv4_subnet
+      ansible.builtin.set_fact:
+        server_address: "{{ ipv4_addr | ansible.utils.ipaddr }}"
+        ptr_record: "{{ ipv4_addr | ansible.utils.ipaddr('revdns') }}"
+        net_mask: "{{ ipv4_addr }}/{{ ipv4_subnet }}"
+
+    - name: Set facts derived from net_mask
+      ansible.builtin.set_fact:
+        cidr: "{{ net_mask | ansible.utils.ipaddr('network/prefix') }}"
+        broadcast: "{{ net_mask | ansible.utils.ipaddr('broadcast') }}"
+
+
+    - name: Display server_address
+      ansible.builtin.debug:
+        msg: server_address is {{ server_address }}
+
+    - name: Display PTR record form for server_address
+      ansible.builtin.debug:
+        msg: ptr_record is {{ ptr_record }}
+
+    - name: Display address and netmask in VLSM notation
+      ansible.builtin.debug:
+        msg: net_mask is {{ net_mask }}
+
+    - name: Display address and prefix in CIDR notation
+      ansible.builtin.debug:
+        msg: cidr is {{ cidr }}
+
+    - name: Display broadcast address for {{ cidr }}
+      ansible.builtin.debug:
+        msg: broadcast is {{ broadcast }}
