@@ -4,26 +4,8 @@
   gather_facts: true
 
   tasks:
-    - name: Check system uptime
-      shell: "uptime"
-      register: uptime_result
-      # failed_when: uptime_result.rc != 0
-
-    - name: Check disk usage
-      shell: "df -h"
-      register: disk_usage_result
-      #failed_when: disk_usage_result.rc != 0
-
-    - name: Check memory usage
-      shell: "free -m"
-      register: memory_usage_result
-      #failed_when: memory_usage_result.rc != 0
-
-    - name: Check for running processes
-      shell: "ps -ef"
-      register: process_list_result
-      #failed_when: process_list_result.rc != 0
-
-    - name: Display results
-      debug:
-        msg: "{{ uptime_result.stdout }}"
+    - name: Generate HTML report for each host
+      template:
+        src: host_details_report.j2
+        dest: /tmp/health_check_report.html
+      delegate_to: localhost
