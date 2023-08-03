@@ -1,6 +1,6 @@
-- name: Host healthcheck
+---
+- name: Generate Host Details HTML Reports
   hosts: all
-  become: true
   gather_facts: true
 
   tasks:
@@ -8,4 +8,12 @@
       template:
         src: host_details_report.j2
         dest: /tmp/health_check_report.html
-      delegate_to: localhost
+
+    - name: fetch the file
+      fetch:
+        src: /tmp/health_check_report.html
+        dest: /tmp/
+        owner: awx
+        group: awx
+        mode: 0775
+        flat: yes
