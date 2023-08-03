@@ -9,12 +9,11 @@
         src: host_details_report.j2
         dest: /tmp/health_check_report.html
 
-    - name: fetch the file
-      fetch:
+
+    - name: copy the file to httpd document root
+      copy:
         src: /tmp/health_check_report.html
         dest: /var/www/html/index.html
         owner: apache
         group: apache
-        mode: 0775
-        flat: yes
-      delegate_to: "proxy server"
+        
