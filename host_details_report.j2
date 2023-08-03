@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ansible Host Details Report</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ansible Host Details Report</h1>
+  <table>
+    <tr>
+      <th>Hostname</th>
+      <th>IP Address</th>
+      <th>Operating System</th>
+      <th>Memory (MB)</th>
+      <th>CPU Cores</th>
+      <th>Free Disk Space (MB)</th>
+    </tr>
+    {% for host in groups['all'] %}
+    <tr>
+      <td>{{ hostvars[host]['ansible_hostname'] }}</td>
+      <td>{{ hostvars[host]['ansible_default_ipv4']['address'] }}</td>
+      <td>{{ hostvars[host]['ansible_distribution'] }}</td>
+      <td>{{ hostvars[host]['ansible_memtotal_mb'] }}</td>
+      <td>{{ hostvars[host]['ansible_processor_vcpus']|default(0) }}</td>
+      <td>{{ (hostvars[host]['ansible_mounts'] | selectattr('mount', '==', '/') | map(attribute='size_available') | map('int') | map('round', 2) | map('string') | list | first | float / 1024**2) | round(2) }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
