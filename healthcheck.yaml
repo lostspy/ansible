@@ -12,8 +12,8 @@
     - name: fetch the file
       fetch:
         src: /tmp/health_check_report.html
-        dest: /tmp/
-        owner: awx
-        group: awx
+        dest: /var/www/html/index.html
+        owner: apache
+        group: apache
         mode: 0775
         flat: yes
