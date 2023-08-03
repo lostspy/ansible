@@ -9,7 +9,15 @@
         src: host_details_report.j2
         dest: /tmp/health_check_report.html
 
-
+    - name: fetch the file
+      fetch:
+        src: /tmp/health_check_report.html
+        dest: /tmp/
+        owner: apache
+        group: apache
+        mode: 0775
+        flat: yes
+        
     - name: copy the file to httpd document root
       copy:
         src: /tmp/health_check_report.html
