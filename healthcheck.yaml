@@ -16,4 +16,5 @@
         dest: /var/www/html/index.html
         owner: apache
         group: apache
+      delegate_to: "proxy_server"
         
