@@ -3,14 +3,17 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Get list of spot instance requests
-      amazon.aws.ec2_instance_facts:
+    - name: get the information of running instance
+      amazon.aws.ec2_instance_info:
         region: "ap-south-2"
         filters:
-          instance-lifecycle: "spot"
-          state: "open"
-      register: spot_instances
+          instance-state-name: [ "running"]
+      register: running_instances
 
-    - name: Debug spot instance requests
+    - name: Set fact for running instances ID
+      set_fact:
+        running_instances_id: "{{ running_instances.instances | map(attribute='id') | list }}"
+        
+    - name: debug the information
       debug:
-        var: spot_instances
+        msg: "{{ running_instances_id }}"
