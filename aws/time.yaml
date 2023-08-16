@@ -1,0 +1,8 @@
+---
+- name: Time
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: get the current data and time
+      debug:
+        msg: "{{ ansible_date_time.epoc }}"
