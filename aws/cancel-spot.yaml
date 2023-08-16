@@ -12,7 +12,7 @@
 
     - name: Set fact for running instances ID
       set_fact:
-        running_instances_id: "{{ running_instances.instances }}"
+        running_instances_id: "{{ running_instances.instances | map(attribute='instance_id') | list }}"
         
     - name: debug the information
       debug:
