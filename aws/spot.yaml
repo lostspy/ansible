@@ -17,3 +17,14 @@
     - name: debug the ami id
       debug:
         var: ami_spot
+
+    - name: Launch Spot instance
+      amazon.aws.ec2_spot_instance:
+        region: ap-south-2
+        launch_specification:
+          image_id: "{{ ami_spot }}"
+          key_name: hyd
+          instance_type: t3.medium
+        spot_price: "0.2"
+        tags:
+          Name: RHEL
