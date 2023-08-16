@@ -3,7 +3,7 @@
   gather_facts: false
   tasks:
     - name: List old AMI images
-      amazon.ami.ec2_ami:
+      amazon.aws.ec2_ami:
         filters:
           name:
             - rhel
