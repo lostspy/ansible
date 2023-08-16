@@ -7,7 +7,7 @@
       amazon.aws.ec2_instance_info:
         region: "ap-south-2"
         filters:
-          instance-state-name: [ "running"]
+          instance-state-name: [ "running" ]
       register: running_instances
 
     - name: Set fact for running instances ID
@@ -20,7 +20,7 @@
 
     - name: create a new ami image
       amazon.aws.ec2_ami:
-        instance_id: "{{ running_instances_id }}"
+        instance_id: "{{ running_instances_id | strip('[]') }}"
         region: "ap-south-2"
         wait: true
         name: rhel
