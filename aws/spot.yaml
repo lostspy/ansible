@@ -28,3 +28,5 @@
         spot_price: "0.1"
         tags:
           Name: RHEL
+        security_groups:
+          - custom-sg
