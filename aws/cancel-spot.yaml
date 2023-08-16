@@ -4,6 +4,14 @@
   gather_facts: false
   ignore_errors: true
   tasks:
+    - name: Get the current date and time
+      set_fact:
+         current_datetime: "{{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}"
+         
+    - name: get the current data and time
+      debug:
+        msg: "{{ current_datetime }}"
+        
     - name: get the information of running instance
       amazon.aws.ec2_instance_info:
         region: "ap-south-2"
@@ -24,10 +32,9 @@
         instance_id: "{{ running_instances_id }}"
         region: "ap-south-2"
         wait: true
-        name: rhel
+        name: "rhel-{{ current_datetime }}"
         tags:
-          Name: rhel
-          Service: server
+          Name: "rhel-{{ current_datetime }}"
 
     - name: describe the Spot Instance requests based on request IDs
       amazon.aws.ec2_spot_instance_info:
