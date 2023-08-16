@@ -10,6 +10,10 @@
         region: ap-south-2
       register: amis
 
-    - name: debug the output
+    - name: set the fact for ami
+      ami_fact:
+        ami_spot: "{{ amis.images[0].image_id }}"
+
+    - name: debug the ami id
       debug:
-        msg: "{{ amis.images[0].image_id }}"
+        var: ami_spot
