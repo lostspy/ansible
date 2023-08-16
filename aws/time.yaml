@@ -5,4 +5,4 @@
   tasks:
     - name: get the current data and time
       debug:
-        msg: "{{ ansible_date_time.epoc }}"
+        msg: "{{ ansible_date_time.epoch }}"
