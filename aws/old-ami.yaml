@@ -15,10 +15,4 @@
 
     - name: Display Active Spot Instance IDs
       debug:
-        var: active_spot_instance_ids
-
-    - name: Spot Request Termination
-      amazon.aws.ec2_spot_instance:
-        spot_instance_request_ids: "{{ active_spot_instance_ids }}"
-        region: "ap-south-2"
-        state: absent
+        var: ami_facts
