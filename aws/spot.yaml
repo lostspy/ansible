@@ -5,7 +5,7 @@
   tasks:
     - name: Check the ami ids
       amazon.aws.ec2_ami_info:
-        owners: 099720109477
+        owners: 429814750573
         filters:
           "tag:AMI name": v1.7
         region: ap-south-2
