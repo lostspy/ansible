@@ -2,8 +2,8 @@
 - hosts: localhost
   gather_facts: false
   tasks:
-    - name: Get AMI facts
-      amazon.aws.ec2_ami_info:
+    - name: describe the Spot Instance requests based on request IDs
+      amazon.aws.ec2_spot_instance_info:
         region: "ap-south-2"
       register: ami_facts
 
