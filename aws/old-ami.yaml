@@ -11,7 +11,13 @@
       debug:
         var: ami_facts
 
-    - name: Extract Value
+    - name: Set Facts for Active Spot Instance Fleet Request IDs
+      set_fact:
+        active_spot_instance_request_ids: "{{ ami_facts.spot_request | json_query(query) }}"
+      vars:
+        query: "[?state == 'active' && tags[?key == 'aws:ec2spot:fleet-request-id']].spot_instance_request_id"
+      tags: always
+
+    - name: Display Active Spot Instance Fleet Request IDs
       debug:
-        var: item.value
-      with_items: "{{ ami_facts.spot_request[?tags[0].key == 'aws:ec2spot:fleet-request-id'].tags[0].value }}"
+        var: active_spot_instance_request_ids
