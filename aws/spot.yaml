@@ -11,7 +11,7 @@
       register: amis
 
     - name: set the fact for ami
-      ami_fact:
+      set_fact:
         ami_spot: "{{ amis.images[0].image_id }}"
 
     - name: debug the ami id
