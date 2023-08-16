@@ -26,15 +26,38 @@
     - name: debug the information
       debug:
         var : running_instances_id
+        
+    - name: Check the ami ids
+      amazon.aws.ec2_ami_info:
+        filters:
+          "tag:Name": rhel
+        region: ap-south-2
+      register: amiss
+
+    - name: set the fact for ami
+      set_fact:
+        ami_spot1: "{{ amiss.images[0].image_id }}"
+
+    - name: debug the ami id
+      debug:
+        var: ami_spot1
+
+    - name: Deregister AMI (delete associated snapshots too)
+      amazon.aws.ec2_ami:
+        image_id: "{{ ami_spot1 }}"
+        delete_snapshot: True
+        state: absent
+      when: running_instances_id | length > 0
 
     - name: create a new ami image
       amazon.aws.ec2_ami:
         instance_id: "{{ running_instances_id }}"
         region: "ap-south-2"
         wait: true
-        name: "rhel-{{ current_datetime }}"
+        name: "rhel"
         tags:
-          Name: "rhel-{{ current_datetime }}"
+          Name: "rhel"
+      when: running_instances_id | length > 0
 
     - name: describe the Spot Instance requests based on request IDs
       amazon.aws.ec2_spot_instance_info:
@@ -60,3 +83,4 @@
         terminate_instances: yes
         region: ap-south-2
       with_items: "{{ spot_instance_request_ids }}"
+      when: running_instances_id | length > 0
