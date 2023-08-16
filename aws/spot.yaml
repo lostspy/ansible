@@ -12,4 +12,4 @@
 
     - name: debug the output
       debug:
-        msg: "{{ amis.images[0].image.id }}"
+        msg: "{{ amis.images[0].image_id }}"
