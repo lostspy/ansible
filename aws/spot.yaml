@@ -8,6 +8,7 @@
         owners: 099720109477
         filters:
           "tag:AMI name": v1.7
+        region: ap-south-2
       register: amis
 
     - name: debug the output
