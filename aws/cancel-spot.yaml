@@ -12,15 +12,15 @@
 
     - name: Set fact for running instances ID
       set_fact:
-        running_instances_id: "{{ running_instances.instances | map(attribute='instance_id') | list }}"
+        running_instances_id: "{{ running_instances.instances | map(attribute='instance_id') | list  | list }}"
         
     - name: debug the information
       debug:
-        msg: "{{ running_instances_id }}"
+        var : running_instances_id
 
     - name: create a new ami image
       amazon.aws.ec2_ami:
-        instance_id: "{{ running_instances_id | community.general.jinja2_filters.strip('[]')}}"
+        instance_id: "{{ running_instances_id }}"
         region: "ap-south-2"
         wait: true
         name: rhel
