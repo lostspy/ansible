@@ -7,9 +7,13 @@
         region: "ap-south-2"
       register: ami_facts
 
+    - name: Get current date and time
+      ansible.builtin.ansible_date_time:
+      register: current_date_time
+
     - name: Calculate 9 hours ago
       set_fact:
-        nine_hours_ago: "{{ (ansible_date_time.epoch | int) - 32400 }}"  # 9 hours in seconds
+        nine_hours_ago: "{{ (current_date_time.epoch | int) - 32400 }}"  # 9 hours in seconds
 
     - name: Filter old AMI images
       set_fact:
