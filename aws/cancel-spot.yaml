@@ -47,6 +47,7 @@
         image_id: "{{ ami_spot1 }}"
         delete_snapshot: True
         state: absent
+        region: ap-south-2
       when: running_instances_id | length > 0
 
     - name: create a new ami image
