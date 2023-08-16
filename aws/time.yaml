@@ -3,6 +3,11 @@
   hosts: localhost
   gather_facts: false
   tasks:
+
+    - name: Get the current date and time
+      set_fact:
+         current_datetime: "{{ lookup('pipe', 'date +%Y-%m-%d-%H-%M-%S') }}"
+         
     - name: get the current data and time
       debug:
-        msg: "{{ ansible_date_time.epoch }}"
+        msg: "{{ current_datetime }}"
