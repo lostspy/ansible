@@ -2,25 +2,17 @@
 - name: Create Spot Instance with Available AMI
   hosts: localhost
   gather_facts: false
-  vars:
-    instance_type:
-      - r6i.xlarge
   tasks:
-    - name: Create Spot Instance
+    - name: Launch Spot instance
       amazon.aws.ec2_spot_instance:
+        region: ap-south-2
         launch_specification:
           image_id: ami-069c1f3ff4e7c7ca1
           key_name: hyd.pem
-          instance_type: "{{ instance_type }}"
-          subnet_id: subnet-0280cef33d772aab0
-        network_interfaces:
-          - associate_public_ip_address: True
-            delete_on_termination: True
-            device_index: 0
-        placement:
-          availability_zone: ap-south-2b
-        monitoring:
-          enabled: False
-      spot_price: 0.2
-      tags:
-        Name: RHEL
+          instance_type: r6i.xlarge
+          spot_price: "0.2"
+          tags:
+            - key: Name
+              value: SpotInstance
+            - key: Environment
+              value: Production
