@@ -10,7 +10,7 @@
         image_filter:
           age:
             lt: 6h
-        state: list
+        state: present
       register: ec2_ami
 
     - name: Display old AMI images
