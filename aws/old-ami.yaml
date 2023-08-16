@@ -11,7 +11,8 @@
           age:
             lt: 6h
         state: list
+      register: ec2_ami
 
-      - name: Display old AMI images
-        debug:
-          var: ec2_ami.results
+    - name: Display old AMI images
+      debug:
+        var: ec2_ami.results
