@@ -7,6 +7,8 @@
         region: "ap-south-2"
       register: ami_facts
 
-    - name: Display old AMI images
+    - name: Extract Active Spot Instance Request IDs
       debug:
-        var: ami_facts.spot_request.spot_instance_request_id
+        var: item.spot_instance_request_id
+      loop: "{{ ami_facts.spot_request }}"
+      when: item.state == "active"
