@@ -5,9 +5,8 @@
   tasks:
     - name: Check the ami ids
       amazon.aws.ec2_ami_info:
-        owners: 429814750573
         filters:
-          "tag:AMI name": v1.7
+          "tag:Name": rhel
         region: ap-south-2
       register: amis
 
