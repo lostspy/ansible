@@ -9,10 +9,10 @@
         launch_specification:
           image_id: ami-069c1f3ff4e7c7ca1
           key_name: hyd.pem
-          instance_type: r6i.xlarge
-          spot_price: "0.2"
-          tags:
-            - key: Name
-              value: SpotInstance
-            - key: Environment
-              value: Production
+          instance_type: t3.medium
+        spot_price: "0.2"
+        tags:
+          - key: Name
+            value: SpotInstance
+          - key: Environment
+            value: Production
