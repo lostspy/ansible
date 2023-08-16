@@ -2,6 +2,7 @@
 - name: Check and Cancel Spot Instances
   hosts: localhost
   gather_facts: false
+  ignore_errorsL: true
   tasks:
     - name: get the information of running instance
       amazon.aws.ec2_instance_info:
@@ -27,3 +28,28 @@
         tags:
           Name: rhel
           Service: server
+
+    - name: describe the Spot Instance requests based on request IDs
+      amazon.aws.ec2_spot_instance_info:
+        region: "ap-south-2"
+      register: ami_facts
+
+    - name: Display Active Spot Instance IDs
+      debug:
+        var: ami_facts
+
+    - name: Extract spot_instance_request_id values
+      set_fact:
+        spot_instance_request_ids: "{{ ami_facts.spot_request | map(attribute='spot_instance_request_id') | list }}"
+
+    - name: Debug spot_instance_request_ids
+      debug:
+        var: spot_instance_request_ids
+        
+    - name: Cancel spot request and terminate instance
+      amazon.aws.ec2_spot_instance:
+        state: absent
+        spot_instance_request_ids: "{{ item }}"
+        terminate_instances: yes
+        region: ap-south-2
+      with_items: "{{ spot_instance_request_ids }}"
