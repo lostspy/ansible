@@ -3,16 +3,6 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: gather information about an AMI with 'AMI Name' equal to foobar
-      amazon.aws.ec2_ami_info:
-        filters:
-          name: v1.7
-        register: amis
-
-    - name: Debug AMIs found
-      debug:
-        var: amis.results
-
     - name: Create Spot Instance
       amazon.aws.ec2_spot_instance:
         region: ap-south-1
@@ -23,15 +13,12 @@
         tags:
           Name: RHEL-Workstation
         launch_specifications:
-            image_id: "{{ item.id }}"
+            image_id: "ami-069c1f3ff4e7c7ca1"
             instance_type: "{{ instance_type }}"
             key_name: "hyd.pem"  # Replace with your key pair
             security_groups: ["custom-sg"]  # Replace with your security group(s)
             subnet_id: "subnet-0280cef33d772aab0"  # Replace with your subnet ID
             monitoring: no
-      loop: "{{ amis.results }}"
-      loop_control:
-        loop_var: item
       vars:
         instance_type:
           - r5d.xlarge
