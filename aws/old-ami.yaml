@@ -7,12 +7,11 @@
         region: "ap-south-2"
       register: ami_facts
 
-    - name: Extract Active Spot Instance Request IDs
-      set_fact:
-        active_spot_instance_ids: "{{ active_spot_instance_ids | default([]) + [item.spot_instance_request_id] }}"
-      loop: "{{ ami_facts.spot_request }}"
-      when: item.state == "active"
-
     - name: Display Active Spot Instance IDs
       debug:
         var: ami_facts
+
+    - name: Extract Value
+      debug:
+        var: item.value
+      with_items: "{{ ami_facts.spot_request[?tags[0].key == 'aws:ec2spot:fleet-request-id'].tags[0].value }}"
