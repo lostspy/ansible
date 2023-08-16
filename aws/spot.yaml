@@ -3,27 +3,27 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Search for available AMIs
-      ec2_ami_find:
-        region: ap-south-1
-        owner: self
-        architecture: x86_64
-        name: "v1.7"  # Replace with your AMI name filter
-      register: amis
+    - name: gather information about an AMI with 'AMI Name' equal to foobar
+      amazon.aws.ec2_ami_info:
+        filters:
+          name: 'v1.7'
+        register: amis
 
     - name: Debug AMIs found
       debug:
         var: amis.results
 
     - name: Create Spot Instance
-      ec2_spot_instance_request:
+      amazon.aws.ec2_spot_instance:
         region: ap-south-1
         spot_price: "0.2"  # Specify your desired spot price
         count: 1
         state: present
         wait: yes
+        tags:
+          Name: RHEL-Workstation
         launch_specifications:
-          - image_id: "{{ item.id }}"
+            image_id: "{{ item.id }}"
             instance_type: "{{ instance_type }}"
             key_name: "hyd.pem"  # Replace with your key pair
             security_groups: ["custom-sg"]  # Replace with your security group(s)
