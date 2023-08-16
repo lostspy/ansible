@@ -6,7 +6,7 @@
     - name: gather information about an AMI with 'AMI Name' equal to foobar
       amazon.aws.ec2_ami_info:
         filters:
-          name: 'v1.7'
+          name: v1.7
         register: amis
 
     - name: Debug AMIs found
