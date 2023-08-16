@@ -2,12 +2,19 @@
 - hosts: localhost
   gather_facts: false
   tasks:
-    - name: Get AMI images
-      amazon.aws.ec2_ami:
-        name: "rhel"
+    - name: Get AMI facts
+      community.aws.ec2_ami_facts:
         region: "ap-south-2"
-      register: ami_result
+      register: ami_facts
+
+    - name: Calculate 9 hours ago
+      set_fact:
+        nine_hours_ago: "{{ (ansible_date_time.epoch | int) - 32400 }}"  # 9 hours in seconds
+
+    - name: Filter old AMI images
+      set_fact:
+        old_amis: "{{ ami_facts.images | dict2items | selectattr('value.creationDate', '<', nine_hours_ago) | list }}"
 
     - name: Display old AMI images
       debug:
-        var: ami_result
+        var: old_amis
