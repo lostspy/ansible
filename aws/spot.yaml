@@ -2,25 +2,27 @@
 - name: Create Spot Instance with Available AMI
   hosts: localhost
   gather_facts: false
+  vars:
+    instance_type:
+      - r5d.xlarge
+      - r5.xlarge
+      - r6i.xlarge
   tasks:
     - name: Create Spot Instance
       amazon.aws.ec2_spot_instance:
-        region: ap-south-1
-        spot_price: "0.2"  # Specify your desired spot price
-        count: 1
-        state: present
-        wait: yes
-        tags:
-          Name: RHEL-Workstation
-        launch_specifications:
-            image_id: "ami-069c1f3ff4e7c7ca1"
-            instance_type: "{{ instance_type }}"
-            key_name: "hyd.pem"  # Replace with your key pair
-            security_groups: ["custom-sg"]  # Replace with your security group(s)
-            subnet_id: "subnet-0280cef33d772aab0"  # Replace with your subnet ID
-            monitoring: no
-      vars:
-        instance_type:
-          - r5d.xlarge
-          - r5.xlarge
-          - r6i.xlarge
+        launch_specification:
+          image_id: ami-069c1f3ff4e7c7ca1
+          key_name: hyd.pem
+          instance_type: "{{ instance_type }}"
+          subnet_id: subnet-0280cef33d772aab0
+        network_interfaces:
+          - associate_public_ip_address: True
+            delete_on_termination: True
+            device_index: 0
+        placement:
+          availability_zone: ap-south-2a
+        monitoring:
+          enabled: False
+      spot_price: 0.2
+      tags:
+        Name: RHEL
