@@ -18,3 +18,11 @@
     - name: Debug spot_instance_request_ids
       debug:
         var: spot_instance_request_ids
+        
+    - name: Cancel spot request and terminate instance
+      amazon.aws.ec2_spot_instance:
+        state: absent
+        spot_instance_request_ids: "{{ item }}"
+        terminate_instances: yes
+        region: ap-south-2
+      with_items: "{{ spot_instance_request_ids }}"
