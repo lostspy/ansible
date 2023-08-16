@@ -9,4 +9,4 @@
 
     - name: Display old AMI images
       debug:
-        var: ami_facts
+        var: ami_facts.spot_request.spot_instance_request_id
