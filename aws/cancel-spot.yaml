@@ -1,0 +1,16 @@
+---
+- name: Check and Cancel Spot Instances
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Get list of spot instance requests
+      amazon.aws.ec2_instance_facts:
+        region: "ap-south-2"
+        filters:
+          instance-lifecycle: "spot"
+          state: "open"
+      register: spot_instances
+
+    - name: Debug spot instance requests
+      debug:
+        var: spot_instances
