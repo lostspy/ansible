@@ -4,6 +4,7 @@
   tasks:
     - name: Get AMI images
       amazon.aws.ec2_ami:
+        name: "rhel"
         region: "ap-south-2"
       register: ami_result
 
