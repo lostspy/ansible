@@ -2,7 +2,7 @@
 - name: Check and Cancel Spot Instances
   hosts: localhost
   gather_facts: false
-  ignore_errorsL: true
+  ignore_errors: true
   tasks:
     - name: get the information of running instance
       amazon.aws.ec2_instance_info:
