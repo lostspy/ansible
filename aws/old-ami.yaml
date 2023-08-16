@@ -16,3 +16,8 @@
     - name: Display Active Spot Instance IDs
       debug:
         var: active_spot_instance_ids
+
+    - name: Spot Request Termination
+      amazon.aws.ec2_spot_instance:
+        spot_instance_request_ids: "{{ active_spot_instance_ids }}"
+        state: absent
