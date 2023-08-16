@@ -2,17 +2,22 @@
 - hosts: localhost
   gather_facts: false
   tasks:
-    - name: List old AMI images
+    - name: Get AMI images
       amazon.aws.ec2_ami:
+        region: "ap-south-2"
         filters:
-          name:
-            - rhel
-        image_filter:
-          age:
-            lt: 6h
-        state: present
-      register: ec2_ami
+          "state": "available"
+        sort:
+          key: "creationDate"
+          order: "desc"
+      register: ami_result
+
+    - name: Filter old AMI images
+      set_fact:
+        old_amis: "{{ ami_result.images | selectattr('creationDate', '<', six_hours_ago) | list }}"
+      vars:
+        six_hours_ago: "{{ (ansible_date_time.epoch | int) - (21600) }}"  # 6 hours in seconds
 
     - name: Display old AMI images
       debug:
-        var: ec2_ami.results
+        var: old_amis
