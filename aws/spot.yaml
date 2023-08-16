@@ -3,13 +3,13 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Launch Spot instance
-      amazon.aws.ec2_spot_instance:
-        region: ap-south-2
-        launch_specification:
-          image_id: ami-069c1f3ff4e7c7ca1
-          key_name: hyd
-          instance_type: t3.medium
-        spot_price: "0.2"
-        tags:
-          Name: RHEL
+    - name: Check the ami ids
+      amazon.aws.ec2_ami_info:
+        owners: 099720109477
+        filters:
+          "tag:AMI name": v1.7
+      register: amis
+
+    - name: debug the output
+      debug:
+        msg: "{{ amis }}"
