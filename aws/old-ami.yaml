@@ -3,7 +3,7 @@
   gather_facts: false
   tasks:
     - name: Get AMI facts
-      amazon.aws.ec2_ami_facts:
+      amazon.aws.ec2_ami_info:
         region: "ap-south-2"
       register: ami_facts
 
