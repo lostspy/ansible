@@ -5,11 +5,6 @@
     - name: Get AMI images
       amazon.aws.ec2_ami:
         region: "ap-south-2"
-        filters:
-          "state": "available"
-        sort:
-          key: "creationDate"
-          order: "desc"
       register: ami_result
 
     - name: Filter old AMI images
