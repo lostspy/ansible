@@ -21,6 +21,7 @@
     - name: create a new ami image
       amazon.aws.ec2_ami:
         instance_id: "{{ running_instances_id }}"
+        region: "ap-south-2"
         wait: true
         name: rhel
         tags:
