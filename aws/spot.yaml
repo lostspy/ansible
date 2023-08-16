@@ -4,8 +4,6 @@
   gather_facts: false
   vars:
     instance_type:
-      - r5d.xlarge
-      - r5.xlarge
       - r6i.xlarge
   tasks:
     - name: Create Spot Instance
@@ -20,7 +18,7 @@
             delete_on_termination: True
             device_index: 0
         placement:
-          availability_zone: ap-south-2a
+          availability_zone: ap-south-2b
         monitoring:
           enabled: False
       spot_price: 0.2
