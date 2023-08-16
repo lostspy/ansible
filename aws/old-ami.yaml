@@ -7,12 +7,6 @@
         region: "ap-south-2"
       register: ami_result
 
-    - name: Filter old AMI images
-      set_fact:
-        old_amis: "{{ ami_result.images | selectattr('creationDate', '<', six_hours_ago) | list }}"
-      vars:
-        six_hours_ago: "{{ (ansible_date_time.epoch | int) - (21600) }}"  # 6 hours in seconds
-
     - name: Display old AMI images
       debug:
-        var: old_amis
+        var: ami_result
