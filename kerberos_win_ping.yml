@@ -1,0 +1,11 @@
+---
+- name: test kerberos authentication
+  hosts: all
+  connection: winrm
+  gather_facts: false
+  vars:
+    ansible_winrm_transport: kerberos
+    ansible_winrm_server_cert_validation: ignore
+  tasks:
+  - name: win ping
+    win_ping:
