@@ -24,10 +24,43 @@
         launch_specification:
           image_id: "{{ ami_spot }}"
           key_name: hyd
-          instance_type: r6i.xlarge
+          instance_type: t3.medium
           security_groups:
             - custom-sg
         spot_price: "0.1"
         tags:
           Name: RHEL
+      register: aws_instance
 
+    - name: Gather information about any instance
+      amazon.aws.ec2_instance_info:
+        region: "ap-south-2"
+      register: ec2_node_info
+
+    - name: debug the output
+      debug:
+        var: ec2_node_info
+
+    - name: set fact for public ip
+      set_fact:
+        public_ip_address: "{{ ec2_node_info.instances[0].public_ip_address }}"
+
+    - name: debug the output of public ip
+      debug:
+        var: public_ip_address
+
+    - set_fact:
+        email_body: "The EC2 instance has been created successfully. Its public IP address is {{ public_ip_address }}."
+
+    - name: Send email to Gmail
+      community.general.mail:
+        host: smtp.gmail.com
+        port: 587
+        username: nareshyadav219@gmail.com
+        password: nareshyadav91
+        to:
+          - nyp219@gmail.com
+        subject: "Ec2 Instance is Provisioned"
+        body: "{{ email_body }}"
+      delegate_to: localhost
+      when: ec2_instance.changed
