@@ -7,5 +7,15 @@
     ansible_winrm_transport: kerberos
     ansible_winrm_server_cert_validation: ignore
   tasks:
-  - name: win ping
-    win_ping:
+    - name: win ping
+      win_ping:
+    - name: Get Full Hostname
+      ansible.builtin.setup:
+      register: hostname_output
+    - name: Display Hostname, CPU, and Memory Info
+      debug:
+        msg: |
+          Hostname: {{ inventory_hostname }}
+          CPU Cores: {{ hostname_output.ansible_facts.ansible_processor_cores }}
+          Memory Total: {{ hostname_output.ansible_facts.ansible_memtotal_mb }} MB
+          Memory Free: {{ hostname_output.ansible_facts.ansible_memfree_mb }} MB
