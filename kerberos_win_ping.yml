@@ -15,7 +15,8 @@
     - name: Display Hostname, CPU, and Memory Info
       debug:
         msg: |
-          Hostname: {{ inventory_hostname }}
-          CPU Cores: {{ hostname_output.ansible_facts.ansible_processor_cores }}
-          Memory Total: {{ hostname_output.ansible_facts.ansible_memtotal_mb }} MB
-          Memory Free: {{ hostname_output.ansible_facts.ansible_memfree_mb }} MB
+          Hostname: {{ item.inventory_hostname }}
+          CPU Cores: {{ item.ansible_facts.ansible_processor_cores }}
+          Memory Total: {{ item.ansible_facts.ansible_memtotal_mb }} MB
+          Memory Free: {{ item.ansible_facts.ansible_memfree_mb }} MB
+      loop: "{{ hostname_outputs }}"
