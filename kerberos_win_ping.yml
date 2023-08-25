@@ -19,4 +19,4 @@
           CPU Cores: {{ item.ansible_facts.ansible_processor_cores }}
           Memory Total: {{ item.ansible_facts.ansible_memtotal_mb }} MB
           Memory Free: {{ item.ansible_facts.ansible_memfree_mb }} MB
-      loop: "{{ hostname_outputs }}"
+      loop: "{{ hostname_output }}"
