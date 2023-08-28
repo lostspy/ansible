@@ -36,6 +36,7 @@
         - BITS
       register: service_status
 
-    - name: Display service status
+   - name: Display service status
       debug:
-        var: service_status
+        msg: "Service {{ item.name }} is {{ item.state }}"
+      loop: "{{ service_status.results }}"
