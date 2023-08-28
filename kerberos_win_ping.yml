@@ -26,3 +26,16 @@
           CPU Cores: {{ hostname_output.ansible_facts.ansible_processor_cores }}
           Memory Total: {{ hostname_output.ansible_facts.ansible_memtotal_mb }} MB
           Memory Free: {{ hostname_output.ansible_facts.ansible_memfree_mb }} MB
+
+    - name: Check if service is running
+      win_service:
+        name: "{{ item }}"
+        state: started
+      with_items:
+        - wuauserv
+        - BITS
+      register: service_status
+
+    - name: Display service status
+      debug:
+        var: service_status
