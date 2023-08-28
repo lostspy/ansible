@@ -3,7 +3,6 @@
   hosts: all
   connection: winrm
   gather_facts: false
-  serial: 1
   vars:
     ansible_winrm_transport: kerberos
     ansible_winrm_server_cert_validation: ignore
