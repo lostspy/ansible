@@ -10,9 +10,15 @@
   tasks:
     - name: win ping
       win_ping:
+
+    - name: nullify the variable
+      set_fact:
+        hostname_output: ""
+        
     - name: Get Full Hostname
       ansible.builtin.setup:
       register: hostname_output
+      
     - name: Display Hostname, CPU, and Memory Info
       debug:
         msg: |
