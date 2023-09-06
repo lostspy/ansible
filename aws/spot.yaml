@@ -27,7 +27,7 @@
           instance_type: r6i.2xlarge
           security_groups:
             - custom-sg
-        spot_price: "0.1"
+        spot_price: "0.2"
         tags:
           Name: RHEL
       register: aws_instance
