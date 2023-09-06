@@ -24,7 +24,7 @@
         launch_specification:
           image_id: "{{ ami_spot }}"
           key_name: hyd
-          instance_type: r6i.xlarge
+          instance_type: r6i.2xlarge
           security_groups:
             - custom-sg
         spot_price: "0.1"
