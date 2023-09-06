@@ -1,0 +1,26 @@
+---
+- name: Create Spot Instance with Available AMI
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: set the fact for ami
+      set_fact:
+        ami_spot: "ami-008b85aa3ff5c1b02"
+
+    - name: debug the ami id
+      debug:
+        var: ami_spot
+
+    - name: Launch Spot instance
+      amazon.aws.ec2_spot_instance:
+        region: ap-south-1
+        launch_specification:
+          image_id: "{{ ami_spot }}"
+          key_name: Mumbai
+          instance_type: p2.16xlarge
+          security_groups:
+            - launch-wizard-1
+        spot_price: "0.1"
+        tags:
+          Name: RHEL
+      register: aws_instance
