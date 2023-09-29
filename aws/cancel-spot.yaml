@@ -14,7 +14,7 @@
         
     - name: get the information of running instance
       amazon.aws.ec2_instance_info:
-        region: "ap-south-2"
+        region: "ap-south-1"
         filters:
           instance-state-name: [ "running" ]
       register: running_instances
@@ -31,7 +31,7 @@
       amazon.aws.ec2_ami_info:
         filters:
           "tag:Name": rhel
-        region: ap-south-2
+        region: ap-south-1
       register: amiss
 
     - name: set the fact for ami
@@ -47,13 +47,13 @@
         image_id: "{{ ami_spot1 }}"
         delete_snapshot: True
         state: absent
-        region: ap-south-2
+        region: ap-south-1
       when: running_instances_id | length > 0
 
     - name: create a new ami image
       amazon.aws.ec2_ami:
         instance_id: "{{ running_instances_id }}"
-        region: "ap-south-2"
+        region: "ap-south-1"
         wait: true
         name: "rhel"
         tags:
@@ -62,7 +62,7 @@
 
     - name: describe the Spot Instance requests based on request IDs
       amazon.aws.ec2_spot_instance_info:
-        region: "ap-south-2"
+        region: "ap-south-1"
       register: ami_facts
 
     - name: Display Active Spot Instance IDs
