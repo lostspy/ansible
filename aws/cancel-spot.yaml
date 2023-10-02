@@ -21,13 +21,13 @@
       set_fact:
         running_instances_id: "{{ running_instances.instances | map(attribute='instance_id') | join(' ') }}"
       when: running_instances.instances | length > 0
-        
+
     # Display the running instance IDs if there are any running instances
     - name: Display running instance IDs
       debug:
         var : running_instances_id
       when: running_instances.instances | length > 0
-        
+
     # Get information about AMIs with the specified name in the specified region
     - name: Get AMI information
       amazon.aws.ec2_ami_info:
@@ -69,34 +69,33 @@
       with_items : "{{ running_instances_id.split() }}"
       when : running_instances.instances | length > 0
 
-    # Describe the Spot Instance requests in the specified region and register the result as a fact 
-    - name : Describe Spot Instance requests 
+    # Describe the Spot Instance requests in the specified region and register the result as a fact
+    - name : Describe Spot Instance requests
       amazon.aws.ec2_spot_instance_info :
         region : "{{ region }}"
-      register : ami_facts 
+      register : ami_facts
 
-     # Display active Spot Instance request IDs 
-     - name : Display active Spot Instance request IDs 
-       debug :
-         var : ami_facts.spot_request_ids 
+    # Display active Spot Instance request IDs
+    - name : Display active Spot Instance request IDs
+      debug :
+        var : ami_facts.spot_request_ids
 
-     # Extract spot_instance_request_id values from the fact registered above 
-     - name : Extract spot_instance_request_id values 
-       set_fact : 
-          spot_instance_request_ids : "{{ ami_facts.spot_request | map(attribute='spot_instance_request_id') | list }}" 
+    # Extract spot_instance_request_id values from the fact registered above
+    - name : Extract spot_instance_request_id values
+      set_fact :
+         spot_instance_request_ids : "{{ ami_facts.spot_request | map(attribute='spot_instance_request_id') | list }}"
 
-     # Debug spot_instance_request_ids 
-     - name : Debug spot_instance_request_ids 
-       debug : 
-         var : spot_instance_request_ids 
+    # Debug spot_instance_request_ids
+    - name : Debug spot_instance_request_ids
+      debug :
+        var : spot_instance_request_ids
 
-     # Cancel each Spot Instance request and terminate its associated instance if there are any running instances 
-     - name : Cancel each Spot Instance request and terminate its associated instance 
-       amazon.aws.ec2_spot_instance : 
-         state : absent 
-         spot_instance_request_ids : "{{ item }}" 
-         terminate_instances : yes 
-         region : "{{ region }}"
-       with_items : "{{ spot_instance_request_ids }}" 
-       when : running_instances.instances | length > 0 
-
+    # Cancel each Spot Instance request and terminate its associated instance if there are any running instances
+    - name : Cancel each Spot Instance request and terminate its associated instance
+      amazon.aws.ec2_spot_instance :
+        state : absent
+        spot_instance_request_ids : "{{ item }}"
+        terminate_instances : yes
+        region : "{{ region }}"
+      with_items : "{{ spot_instance_request_ids }}"
+      when : running_instances.instances | length > 0
