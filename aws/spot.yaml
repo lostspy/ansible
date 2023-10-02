@@ -7,7 +7,7 @@
       amazon.aws.ec2_ami_info:
         filters:
           "tag:Name": rhel
-        region: ap-south-1
+        region: ap-south-2
       register: amis
 
     - name: set the fact for ami
@@ -20,13 +20,13 @@
 
     - name: Launch Spot instance
       amazon.aws.ec2_spot_instance:
-        region: ap-south-1
+        region: ap-south-2
         launch_specification:
           image_id: "{{ ami_spot }}"
-          key_name: Mumbai
-          instance_type: g4dn.xlarge
+          key_name: hyd
+          instance_type: i4i.2xlarge
           security_groups:
-            - launch-wizard-1
+            - custom-sg
         spot_price: "0.2"
         tags:
           Name: RHEL
