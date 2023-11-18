@@ -1,0 +1,120 @@
+- hosts: all
+  name: Connecting to PAM API
+  connection: local
+  max_fail_percentage: 100  # Correct naming convention
+  ignore_unreachable: false
+  gather_facts: yes
+  tasks:
+  - name: Capture inventory hostname
+    shell: echo "{{ inventory_hostname }}"
+    register: out
+    ignore_errors: yes
+
+  - name: Create the inventory file
+    file:
+      path: /var/lib/awx/projects/Production/inventory_artifacts_arcon
+      owner: awx
+      group: awx
+      mode: 0755
+      state: touch
+
+  - name: empty the inventory file
+    shell: true > inventory_artifacts_arcon
+    args:
+      chdir : /var/lib/awx/projects/Production/
+
+  - name: appending the variables to the inventory file
+    template:
+      src: inventory_template.j2
+      dest: inventory_artifacts_arcon
+    vars:
+      value: "{{ item }}"
+    loop: "{{ out.stdout }}"
+    args:
+      chdir: /var/lib/awx/projects/Production
+
+  - name: inserting the group name to the inventory file
+    lineinfile:
+      path: /var/lib/awx/projects/Production/inventory_artifacts_arcon
+      line: '[hosts]'
+      insertbefore: BOF
+
+
+
+
+
+
+
+
+- name: Fetch SSH Key content from CyberArk Vault
+  uri:
+    url: ""
+  register: result_1
+  ignore_errors: yes
+  delegate_to: localhost
+  retries: 5  # Handle temporary errors with retries
+  delay: 10  # Wait for 10 seconds between retries
+
+- name: Create temporary file for SSH key
+  tempfile:
+    state: present
+    suffix: key
+  register: temp_key
+  delegate_to: localhost
+  no_log: false
+  when: result_1.status == 200
+
+- name: Write SSH key content to temporary file
+  copy:
+    dest: "{{ temp_key.path }}"
+    content: "{{ result_1.json.Content }}"
+    delegate_to: localhost
+    changed_when: no  # Check for actual changes
+    no_log: false
+  when: result_1.status == 200
+
+- name: Append newline to the end of the temporary file
+  lineinfile:
+    path: "{{ temp_key.path }}"
+    line: ""
+    insertafter: "EOF"
+    delegate_to: localhost
+    when: result_1.status == 200
+
+
+
+
+---
+- name: Create a new inventory file
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Add hosts to the inventory
+      add_host:
+        name: "{{ item.name }}"
+        groups: "{{ item.group }}"
+        ansible_user: "{{ item.user }}"
+      loop: "{{ hosts_list }}"
+      vars:
+        hosts_list:
+          - name: host1
+            group: group1
+            user: user1
+          - name: host2
+            group: group2
+            user: user2
+          - name: host3
+            group: group3
+            user: user3
+    - name: Write the inventory file
+      template:
+        src: inventory_template.j2
+        dest: new_inventory.ini
+
+
+{% for group in groups %}
+[{{ group }}]
+{% for host in groups[group] %}
+{{ host }} ansible_user={{ hostvars[host].ansible_user }}
+{% endfor %}
+{% endfor %}
