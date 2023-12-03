@@ -5,7 +5,7 @@
   tasks:
     - name: set the fact for ami
       set_fact:
-        ami_spot: "ami-008b85aa3ff5c1b02"
+        ami_spot: "ami-0f6eedea3245f77fd"
 
     - name: debug the ami id
       debug:
@@ -17,10 +17,10 @@
         launch_specification:
           image_id: "{{ ami_spot }}"
           key_name: Mumbai
-          instance_type: p2.16xlarge
+          instance_type: c5n.metal
           security_groups:
             - launch-wizard-1
-        spot_price: "0.1"
+        spot_price: "2"
         tags:
           Name: RHEL
       register: aws_instance
