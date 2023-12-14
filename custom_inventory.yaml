@@ -1,4 +1,3 @@
----
 - name: Echo Inventory Hostname and Create Custom Inventory File
   hosts: all
   gather_facts: false
@@ -7,20 +6,38 @@
       ansible.builtin.debug:
         msg: "Inventory Hostname: {{ inventory_hostname }}"
 
-    - name: create the file
+    - name: Check if custom inventory file exists
+      ansible.builtin.stat:
+        path: /tmp/custom_inventory.ini
+      delegate_to: localhost
+      register: file_check
+
+    - name: Create empty custom inventory file if it doesn't exist
       ansible.builtin.file:
         path: /tmp/custom_inventory.ini
         state: touch
       delegate_to: localhost
+      when: not file_check.stat.exists
 
     - name: Task 2 - Create Custom Inventory File
-      ansible.builtin.blockinfile:
-        path: /tmp/custom_inventory.ini
-        block: |
-          [hosts]
-          {% for host in groups['all'] %}
-          {{ host }}
-          {% endfor %}
+      ansible.builtin.block:
+        name: Create Custom Inventory File
+        block:
+          - name: Create the hosts section
+            ansible.builtin.lineinfile:
+              path: /tmp/custom_inventory.ini
+              line: "[hosts]"
+              insertafter: EOF
+            delegate_to: localhost
+
+          - name: Add hosts to the inventory file
+            ansible.builtin.lineinfile:
+              path: /tmp/custom_inventory.ini
+              line: "{{ item }}"
+              insertafter: "[hosts]"
+            delegate_to: localhost
+            loop: "{{ groups['all'] }}"
+
       delegate_to: localhost
           
     - name: cat the output
