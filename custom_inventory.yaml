@@ -19,30 +19,27 @@
       delegate_to: localhost
       when: not file_check.stat.exists
 
-    - name: Task 2 - Create Custom Inventory File
-      ansible.builtin.block:
-        name: Create Custom Inventory File
-        block:
-          - name: Create the hosts section
-            ansible.builtin.lineinfile:
-              path: /tmp/custom_inventory.ini
-              line: "[hosts]"
-              insertafter: EOF
-            delegate_to: localhost
-
-          - name: Add hosts to the inventory file
-            ansible.builtin.lineinfile:
-              path: /tmp/custom_inventory.ini
-              line: "{{ item }}"
-              insertafter: "[hosts]"
-            delegate_to: localhost
-            loop: "{{ groups['all'] }}"
-
+    - name: Create the hosts section
+      ansible.builtin.lineinfile:
+        path: /tmp/custom_inventory.ini
+        line: "[hosts]"
+        insertafter: EOF
       delegate_to: localhost
+      when: file_check.stat.exists
+
+    - name: Add hosts to the inventory file
+      ansible.builtin.lineinfile:
+        path: /tmp/custom_inventory.ini
+        line: "{{ item }}"
+        insertafter: "[hosts]"
+      delegate_to: localhost
+      loop: "{{ groups['all'] }}"
+      when: file_check.stat.exists
           
     - name: cat the output
       ansible.builtin.shell: "cat /tmp/custom_inventory.ini"
       delegate_to: localhost
+      when: file_check.stat.exists
 
     - name: pause
       ansible.builtin.pause:
