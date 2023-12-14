@@ -1,6 +1,7 @@
 ---
 - name: Echo Inventory Hostname and Create Custom Inventory File
   hosts: all
+  delegate_to: localhost
   gather_facts: false
   tasks:
     - name: Task 1 - Echo Inventory Hostname
@@ -26,3 +27,7 @@
     - name: cat the output
       ansible.builtin.shell: "cat /tmp/custom_inventory.ini"
       delegate_to: localhost
+
+    - name: pause
+      ansible.builtin.pause:
+        seconds: 600
