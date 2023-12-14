@@ -1,0 +1,11 @@
+---
+- name: Pause Playbook for 1 Hour
+  hosts: all
+  tasks:
+    - name: "Pause for 1 Hour"
+      ansible.builtin.pause:
+        seconds: 3600  # 1 hour = 60 minutes * 60 seconds
+
+    - name: "Continue with the rest of the playbook"
+      ansible.builtin.debug:
+        msg: "This task runs after the pause"
