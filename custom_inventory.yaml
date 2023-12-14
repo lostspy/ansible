@@ -9,8 +9,9 @@
 
     - name: create the file
       ansible.builtin.file:
-        path: /runner/inventory/custom_inventory.ini
+        path: /tmp/custom_inventory.ini
         state: touch
+      delegate_to: localhost
 
     - name: Task 2 - Create Custom Inventory File
       ansible.builtin.blockinfile:
@@ -20,6 +21,8 @@
           {% for host in groups['all'] %}
           {{ host }}
           {% endfor %}
+      delegate_to: localhost
           
     - name: cat the output
       ansible.builtin.shell: "cat /runner/inventory/custom_inventory.ini"
+      delegate_to: localhost
