@@ -7,7 +7,7 @@
   tasks:
     - name: Attempt SSH Connection
       ansible.builtin.wait_for:
-        host: [all]
+        host: "{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}"
         port: 22
         timeout: 10
       ignore_errors: true
