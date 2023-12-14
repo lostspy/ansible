@@ -15,7 +15,7 @@
 
     - name: Task 2 - Create Custom Inventory File
       ansible.builtin.blockinfile:
-        path: /runner/inventory/custom_inventory.ini
+        path: /tmp/custom_inventory.ini
         block: |
           [hosts]
           {% for host in groups['all'] %}
