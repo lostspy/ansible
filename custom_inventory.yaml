@@ -1,0 +1,20 @@
+---
+- name: Echo Inventory Hostname and Create Custom Inventory File
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Task 1 - Echo Inventory Hostname
+      ansible.builtin.debug:
+        msg: "Inventory Hostname: {{ inventory_hostname }}"
+
+    - name: Task 2 - Create Custom Inventory File
+      ansible.builtin.blockinfile:
+        path: /runner/inventory/custom_inventory.ini
+        block: |
+          [hosts]
+          {% for host in groups['all'] %}
+          {{ host }}
+          {% endfor %}
+          
+    - name: cat the output
+      ansible.builtin.shell: "cat /runner/inventory/custom_inventory.ini"
