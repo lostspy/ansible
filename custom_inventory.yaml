@@ -25,7 +25,6 @@
         line: "[hosts]"
         insertafter: EOF
       delegate_to: localhost
-      when: file_check.stat.exists
 
     - name: Add hosts to the inventory file
       ansible.builtin.lineinfile:
@@ -34,12 +33,10 @@
         insertafter: "[hosts]"
       delegate_to: localhost
       loop: "{{ groups['all'] }}"
-      when: file_check.stat.exists
           
     - name: cat the output
       ansible.builtin.shell: "cat /tmp/custom_inventory.ini"
       delegate_to: localhost
-      when: file_check.stat.exists
 
     - name: pause
       ansible.builtin.pause:
