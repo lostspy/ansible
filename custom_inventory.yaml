@@ -10,7 +10,7 @@
     - name: create the file
       ansible.builtin.file:
         path: /runner/inventory/custom_inventory.ini
-        state: present
+        state: touch
 
     - name: Task 2 - Create Custom Inventory File
       ansible.builtin.blockinfile:
