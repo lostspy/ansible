@@ -1,0 +1,14 @@
+---
+- name: Testing playbook
+  hosts: [all]
+  become: true
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Attempt SSH Connection
+      ansible.builtin.wait_for:
+        host: [all]
+        port: 22
+        timeout: 10
+      ignore_errors: true
+      register: result
