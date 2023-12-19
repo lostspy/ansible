@@ -5,7 +5,7 @@
   tasks:
     - name: set the fact for ami
       set_fact:
-        ami_spot: "ami-0f6eedea3245f77fd"
+        ami_spot: "ami-011216cf19fad38b7"
 
     - name: debug the ami id
       debug:
