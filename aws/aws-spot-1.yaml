@@ -20,7 +20,7 @@
           instance_type: c5n.metal
           security_groups:
             - launch-wizard-1
-        spot_price: "2"
+        spot_price: "0.2"
         tags:
           Name: RHEL
       register: aws_instance
