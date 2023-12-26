@@ -29,7 +29,7 @@
     - name: Add hosts to the inventory file
       ansible.builtin.lineinfile:
         path: /tmp/custom_inventory.ini
-        line: "{{ item }} ansible_user=perf"
+        line: "{{ item }} ansible_password='lookup(\"env\",\"{{ item }}\")' ansible_user=perf"
         insertafter: "[hosts]"
       delegate_to: localhost
       loop: "{{ groups['all'] }}"
