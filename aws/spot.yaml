@@ -25,7 +25,7 @@
         region: "{{ region1 }}"
         launch_specification:
           image_id: "{{ ami_spot }}"
-          key_name: hyd
+          key_name: mumbai
           instance_type: z1d.xlarge
           security_groups:
             - custom-sg
