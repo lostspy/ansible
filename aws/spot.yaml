@@ -2,12 +2,14 @@
 - name: Create Spot Instance with Available AMI
   hosts: localhost
   gather_facts: false
+  vars:
+    region1: ap-south-1
   tasks:
     - name: Check the ami ids
       amazon.aws.ec2_ami_info:
         filters:
           "tag:Name": rhel
-        region: ap-south-2
+        region: "{{ region1 }}"
       register: amis
 
     - name: set the fact for ami
@@ -20,11 +22,11 @@
 
     - name: Launch Spot instance
       amazon.aws.ec2_spot_instance:
-        region: ap-south-2
+        region: "{{ region1 }}"
         launch_specification:
           image_id: "{{ ami_spot }}"
           key_name: hyd
-          instance_type: i4i.2xlarge
+          instance_type: z1d.xlarge
           security_groups:
             - custom-sg
         spot_price: "0.2"
