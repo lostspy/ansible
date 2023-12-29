@@ -5,7 +5,7 @@
   gather_facts: false
   ignore_errors: true
   vars:
-    region: "ap-south-2" # Define the AWS region here
+    region: "ap-south-1" # Define the AWS region here
     ami_name: "rhel" # Define the AMI name here
   tasks:
     # Get information about running instances in the specified region
@@ -13,7 +13,7 @@
       amazon.aws.ec2_instance_info:
         region: "{{ region }}"
         filters:
-          instance-state-name: [ "running" ]
+          instance-state-name: ["running"]
       register: running_instances
 
     # Set a fact for running instance IDs if there are any running instances
@@ -25,7 +25,7 @@
     # Display the running instance IDs if there are any running instances
     - name: Display running instance IDs
       debug:
-        var : running_instances_id
+        var: running_instances_id
       when: running_instances.instances | length > 0
 
     # Get information about AMIs with the specified name in the specified region
@@ -51,51 +51,7 @@
     # Deregister the AMI (and delete associated snapshots) if there are any running instances
     - name: Deregister AMI (delete associated snapshots too)
       amazon.aws.ec2_ami:
-        image_id: "{{ ami_spot1 }}"
-        delete_snapshot: True
         state: absent
         region: "{{ region }}"
+        image_ids: "{{ ami_spot1 }}"
       when: running_instances.instances | length > 0
-
-    # Create a new AMI image from each running instance if there are any running instances
-    - name: Create a new AMI image from each running instance
-      amazon.aws.ec2_ami:
-        instance_id: "{{ item }}"
-        region: "{{ region }}"
-        wait: true
-        name: "{{ ami_name }}"
-        tags:
-          Name: "{{ ami_name }}"
-      with_items : "{{ running_instances_id.split() }}"
-      when : running_instances.instances | length > 0
-
-    # Describe the Spot Instance requests in the specified region and register the result as a fact
-    - name : Describe Spot Instance requests
-      amazon.aws.ec2_spot_instance_info :
-        region : "{{ region }}"
-      register : ami_facts
-
-    # Display active Spot Instance request IDs
-    - name : Display active Spot Instance request IDs
-      debug :
-        var : ami_facts.spot_request_ids
-
-    # Extract spot_instance_request_id values from the fact registered above
-    - name : Extract spot_instance_request_id values
-      set_fact :
-         spot_instance_request_ids : "{{ ami_facts.spot_request | map(attribute='spot_instance_request_id') | list }}"
-
-    # Debug spot_instance_request_ids
-    - name : Debug spot_instance_request_ids
-      debug :
-        var : spot_instance_request_ids
-
-    # Cancel each Spot Instance request and terminate its associated instance if there are any running instances
-    - name : Cancel each Spot Instance request and terminate its associated instance
-      amazon.aws.ec2_spot_instance :
-        state : absent
-        spot_instance_request_ids : "{{ item }}"
-        terminate_instances : yes
-        region : "{{ region }}"
-      with_items : "{{ spot_instance_request_ids }}"
-      when : running_instances.instances | length > 0
