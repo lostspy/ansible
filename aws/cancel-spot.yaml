@@ -1,57 +1,57 @@
----
-# This playbook checks and cancels spot instances on AWS
-- name: Check and Cancel Spot Instances
+- name: Create AMI from running instances and delete spot instances
   hosts: localhost
-  gather_facts: false
-  ignore_errors: true
+  connection: local
+  gather_facts: no
   vars:
-    region: "ap-south-1" # Define the AWS region here
-    ami_name: "rhel" # Define the AMI name here
+    region: ap-south-1 # change this to your region
+    ami_name: rhel # change this to your desired AMI name
   tasks:
-    # Get information about running instances in the specified region
-    - name: Get information about running instances
+    - name: Find running instances
       amazon.aws.ec2_instance_info:
         region: "{{ region }}"
         filters:
-          instance-state-name: ["running"]
-      register: running_instances
+          instance-state-name: running
+      register: ec2_info
 
-    # Set a fact for running instance IDs if there are any running instances
-    - name: Set fact for running instance IDs
-      set_fact:
-        running_instances_id: "{{ running_instances.instances | map(attribute='instance_id') | join(' ') }}"
-      when: running_instances.instances | length > 0
-
-    # Display the running instance IDs if there are any running instances
-    - name: Display running instance IDs
-      debug:
-        var: running_instances_id
-      when: running_instances.instances | length > 0
-
-    # Get information about AMIs with the specified name in the specified region
-    - name: Get AMI information
+    - name: Find AMI with name rhel
       amazon.aws.ec2_ami_info:
+        region: "{{ region }}"
         filters:
-          "tag:Name": "{{ ami_name }}"
-        region: "{{ region }}"
-      register: amiss
+          name: "{{ ami_name }}"
+      register: ami_info
+      when: ec2_info.instances | length > 0 # only run this task if there are running instances
 
-    # Set a fact for the first AMI ID in the list of AMIs if there are any running instances
-    - name: Set fact for AMI ID
-      set_fact:
-        ami_spot1: "{{ amiss.images[0].image_id }}"
-      when: running_instances.instances | length > 0
-
-    # Display the AMI ID if there are any running instances
-    - name: Display AMI ID
-      debug:
-        var: ami_spot1
-      when: running_instances.instances | length > 0
-
-    # Deregister the AMI (and delete associated snapshots) if there are any running instances
-    - name: Deregister AMI (delete associated snapshots too)
+    - name: Delete AMI with name rhel
       amazon.aws.ec2_ami:
-        state: absent
         region: "{{ region }}"
-        image_ids: "{{ ami_spot1 }}"
-      when: running_instances.instances | length > 0
+        image_id: "{{ item.image_id }}"
+        state: absent
+        delete_snapshot: yes
+      loop: "{{ ami_info.images }}"
+      when: ami_info.images | length > 0 # only run this task if there are AMIs with name rhel
+
+    - name: Create AMI from each running instance
+      amazon.aws.ec2_ami:
+        region: "{{ region }}"
+        instance_id: "{{ item.instance_id }}"
+        name: "{{ ami_name }}"
+        tags:
+          Name: rhel
+        wait: yes
+        delete_snapshot: yes
+      loop: "{{ ec2_info.instances }}"
+      when: ec2_info.instances | length > 0 # only run this task if there are running instances
+
+    - name: Find spot fleet request ID
+      amazon.aws.ec2_instance_info:
+        region: "{{ region }}"
+        filters:
+          instance-lifecycle: spot
+      register: spot_info
+      when: ec2_info.instances | length > 0 # only run this task if there are running instances
+
+    - name: Delete the spot fleet
+      amazon.aws.ec2_spot_instance:
+        spot_instance_request_ids: ["{{ spot_info.instances[1].spot_instance_request_id }}"]
+        state: absent
+      when: spot_info.instances | length > 0 # only run this task if there are spot instances
