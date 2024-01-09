@@ -42,9 +42,6 @@
       ansible.builtin.file:
         path: /runner/inventory/artifacts_password
         state: touch
-        owner: awx
-        group: awx
-        mode: 0755
       delegate_to: localhost
 
     - name: setting the variable for password storage
@@ -58,12 +55,6 @@
       with_items:
          - { From : '^                        bash_file =', To: '                        bash_file =ansible_execution_path +"/runner/inventory/artifacts_password"'  }
          - { From : '^                        cmd = ', To: '                        cmd = "source "+ ansible_execution_path +"/runner/inventory/artifacts_password"'  }
-
-    - name: changing permissions
-      ansible.builtin.shell: |
-             chown -R awx:awx  /runner/inventory/artifacts_password
-             chmod -R 755 /runner/inventory/artifacts_password
-      delegate_to: localhost
 
     - ansible.builtin.set_fact:
          pwd: "{{ lookup('arconplugin','/runner/inventory/custom_inventory.ini@hosts',wantlist=True) }}"
