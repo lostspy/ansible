@@ -8,41 +8,44 @@
 
     - name: Check if custom inventory file exists
       ansible.builtin.stat:
-        path: /runner/inventory/custom_inventory.ini
-      delegate_to: localhost
+        path: /tmp/custom_inventory.ini
+      delegate_to: node-1.aap24demo.lab.psi.pnq2.redhat.com
       register: file_check
 
     - name: Create empty custom inventory file if it doesn't exist
       ansible.builtin.file:
-        path: /runner/inventory/custom_inventory.ini
+        path: /tmp/custom_inventory.ini
         state: touch
-      delegate_to: localhost
+      delegate_to: node-1.aap24demo.lab.psi.pnq2.redhat.com
       when: not file_check.stat.exists
 
     - name: Create the hosts section
       ansible.builtin.lineinfile:
-        path: /runner/inventory/custom_inventory.ini
+        path: /tmp/custom_inventory.ini
         line: "[hosts]"
         insertafter: EOF
-      delegate_to: localhost
+      delegate_to: node-1.aap24demo.lab.psi.pnq2.redhat.com
 
     - name: Add hosts to the inventory file
       ansible.builtin.lineinfile:
-        path: /runner/inventory/custom_inventory.ini
+        path: /tmp/custom_inventory.ini
         line: "{{ item }} ansible_password='lookup(\"env\",\"{{ item }}\")' ansible_user=perf"
         insertafter: "[hosts]"
-      delegate_to: localhost
+      delegate_to: node-1.aap24demo.lab.psi.pnq2.redhat.com
       loop: "{{ groups['all'] }}"
           
     - name: cat the output
-      ansible.builtin.shell: "cat /runner/inventory/custom_inventory.ini"
-      delegate_to: localhost
+      ansible.builtin.shell: "cat /tmp/custom_inventory.ini"
+      delegate_to: node-1.aap24demo.lab.psi.pnq2.redhat.com
 
     - name: Creating the password file
       ansible.builtin.file:
         path: /runner/inventory/artifacts_password
         state: touch
-      delegate_to: localhost
+        owner: awx
+        group: awx
+        mode: 0755
+      delegate_to: node-1.aap24demo.lab.psi.pnq2.redhat.com
 
     - name: setting the variable for password storage
       ansible.builtin.lineinfile:
@@ -51,13 +54,19 @@
         line: '{{item.To}}'
         firstmatch: yes
       register: arcon_status
-      delegate_to: localhost
+      delegate_to: node-1.aap24demo.lab.psi.pnq2.redhat.com
       with_items:
          - { From : '^                        bash_file =', To: '                        bash_file =ansible_execution_path +"/runner/inventory/artifacts_password"'  }
          - { From : '^                        cmd = ', To: '                        cmd = "source "+ ansible_execution_path +"/runner/inventory/artifacts_password"'  }
 
+    - name: changing permissions
+      ansible.builtin.shell: |
+             chown -R awx:awx  /runner/inventory/artifacts_password
+             chmod -R 755 /runner/inventory/artifacts_password
+      delegate_to: node-1.aap24demo.lab.psi.pnq2.redhat.com
+
     - ansible.builtin.set_fact:
-         pwd: "{{ lookup('arconplugin','/runner/inventory/custom_inventory.ini@hosts',wantlist=True) }}"
+         pwd: "{{ lookup('arconplugin','/tmp/custom_inventory.ini@hosts',wantlist=True) }}"
       no_log: false
 
     - ansible.builtin.debug:
