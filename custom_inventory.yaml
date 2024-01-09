@@ -8,36 +8,66 @@
 
     - name: Check if custom inventory file exists
       ansible.builtin.stat:
-        path: /tmp/custom_inventory.ini
+        path: /runner/inventory/custom_inventory.ini
       delegate_to: localhost
       register: file_check
 
     - name: Create empty custom inventory file if it doesn't exist
       ansible.builtin.file:
-        path: /tmp/custom_inventory.ini
+        path: /runner/inventory/custom_inventory.ini
         state: touch
       delegate_to: localhost
       when: not file_check.stat.exists
 
     - name: Create the hosts section
       ansible.builtin.lineinfile:
-        path: /tmp/custom_inventory.ini
+        path: /runner/inventory/custom_inventory.ini
         line: "[hosts]"
         insertafter: EOF
       delegate_to: localhost
 
     - name: Add hosts to the inventory file
       ansible.builtin.lineinfile:
-        path: /tmp/custom_inventory.ini
+        path: /runner/inventory/custom_inventory.ini
         line: "{{ item }} ansible_password='lookup(\"env\",\"{{ item }}\")' ansible_user=perf"
         insertafter: "[hosts]"
       delegate_to: localhost
       loop: "{{ groups['all'] }}"
           
     - name: cat the output
-      ansible.builtin.shell: "cat /tmp/custom_inventory.ini"
+      ansible.builtin.shell: "cat /runner/inventory/custom_inventory.ini"
       delegate_to: localhost
 
-    - name: pause
-      ansible.builtin.pause:
-        seconds: 600
+    - name: Creating the password file
+      ansible.builtin.file:
+        path: /runner/inventory/artifacts_password
+        state: touch
+        owner: awx
+        group: awx
+        mode: 0755
+      delegate_to: localhost
+
+    - name: setting the variable for password storage
+      ansible.builtin.lineinfile:
+        path: /usr/share/ansible/plugins/lookup/arconplugin.py
+        regexp: '{{item.From}}'
+        line: '{{item.To}}'
+        firstmatch: yes
+      register: arcon_status
+      delegate_to: localhost
+      with_items:
+         - { From : '^                        bash_file =', To: '                        bash_file =ansible_execution_path +"/runner/inventory/artifacts_password"'  }
+         - { From : '^                        cmd = ', To: '                        cmd = "source "+ ansible_execution_path +"/runner/inventory/artifacts_password"'  }
+
+    - name: changing permissions
+      ansible.builtin.shell: |
+             chown -R awx:awx  /runner/inventory/artifacts_password
+             chmod -R 755 /runner/inventory/artifacts_password
+      delegate_to: localhost
+
+    - ansible.builtin.set_fact:
+         pwd: "{{ lookup('arconplugin','/runner/inventory/custom_inventory.ini@hosts',wantlist=True) }}"
+      no_log: false
+
+    - ansible.builtin.debug:
+        msg: "{{ pwd }}"
