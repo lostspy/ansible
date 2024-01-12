@@ -13,7 +13,7 @@
       register: cpu_info
 
     - name: Display domain information
-      ansible.windows.win_domain_computer:
+      community.windows.win_domain_computer:
       register: domain_info
 
     - name: Display OS details
