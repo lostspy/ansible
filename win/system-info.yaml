@@ -1,0 +1,49 @@
+- name: Gather system information for Windows machines
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Display system information
+      ansible.windows.win_shell: |
+        Get-WmiObject -Class Win32_ComputerSystem | Select-Object Name, Manufacturer, Model, SystemType, TotalPhysicalMemory
+      register: computer_system
+
+    - name: Display CPU information
+      ansible.windows.win_shell: |
+        Get-WmiObject -Class Win32_Processor | Select-Object Name, NumberOfCores, NumberOfLogicalProcessors
+      register: cpu_info
+
+    - name: Display domain information
+      ansible.windows.win_domain_computer:
+      register: domain_info
+
+    - name: Display OS details
+      ansible.windows.win_shell: |
+        Get-WmiObject -Class Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber, OSArchitecture
+      register: os_details
+
+    - name: Display disk drive size
+      ansible.windows.win_shell: |
+        Get-WmiObject -Class Win32_LogicalDisk | Select-Object DeviceID, MediaType, Size, FreeSpace
+      register: disk_drive
+
+    - name: Display network statistics
+      ansible.windows.win_psmodule_info:
+        module_name: NetAdapterStatistics
+      register: network_stats
+
+    - name: Display IPv4 address
+      ansible.windows.win_shell: |
+        Get-WmiObject -Class Win32_NetworkAdapterConfiguration | Where-Object {$_.IPAddress -ne $null} | Select-Object IPAddress
+      register: ipv4_address
+
+    - name: Display gathered information
+      debug:
+        var: item
+      with_items:
+        - "{{ computer_system.stdout }}"
+        - "{{ cpu_info.stdout }}"
+        - "{{ domain_info }}"
+        - "{{ os_details.stdout }}"
+        - "{{ disk_drive.stdout }}"
+        - "{{ network_stats }}"
+        - "{{ ipv4_address.stdout }}"
