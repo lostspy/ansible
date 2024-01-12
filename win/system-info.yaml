@@ -26,11 +26,6 @@
         Get-WmiObject -Class Win32_LogicalDisk | Select-Object DeviceID, MediaType, Size, FreeSpace
       register: disk_drive
 
-    - name: Display network statistics
-      ansible.windows.win_psmodule_info:
-        module_name: NetAdapterStatistics
-      register: network_stats
-
     - name: Display IPv4 address
       ansible.windows.win_shell: |
         Get-WmiObject -Class Win32_NetworkAdapterConfiguration | Where-Object {$_.IPAddress -ne $null} | Select-Object IPAddress
@@ -45,5 +40,4 @@
         - "{{ domain_info }}"
         - "{{ os_details.stdout }}"
         - "{{ disk_drive.stdout }}"
-        - "{{ network_stats }}"
         - "{{ ipv4_address.stdout }}"
