@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Command Outputs Report</title>
+  <style>
+    .output-box {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Command Outputs Report</h1>
+
+  <!-- Command: df -hTP -->
+  <div class="output-box">
+    <h2>df -hTP</h2>
+    <pre>{{ df_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <!-- Command: cat /etc/fstab -->
+  <div class="output-box">
+    <h2>cat /etc/fstab</h2>
+    <pre>{{ fstab_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <!-- Command: route -n -->
+  <div class="output-box">
+    <h2>route -n</h2>
+    <pre>{{ route_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <!-- Command: uname -a -->
+  <div class="output-box">
+    <h2>uname -a</h2>
+    <pre>{{ uname_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <!-- Command: pvs -->
+  <div class="output-box">
+    <h2>pvs</h2>
+    <pre>{{ pvs_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <!-- Command: vgs -->
+  <div class="output-box">
+    <h2>vgs</h2>
+    <pre>{{ vgs_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <!-- Command: lvs -->
+  <div class="output-box">
+    <h2>lvs</h2>
+    <pre>{{ lvs_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <!-- Command: lsblk -->
+  <div class="output-box">
+    <h2>lsblk</h2>
+    <pre>{{ lsblk_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <!-- Command: lsblk -f -->
+  <div class="output-box">
+    <h2>lsblk -f</h2>
+    <pre>{{ lsblk_f_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <!-- Add more sections for other commands... -->
+
+</body>
+</html>
