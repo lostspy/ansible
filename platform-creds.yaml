@@ -1,0 +1,8 @@
+---
+- name: trying to fetch the machine credentials in AAP
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: printing the credentials
+      ansible.builtin.debug:
+        msg: "Ansible Username is {{ ansible_user }} and password is {{ ansible_password }}"
