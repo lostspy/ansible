@@ -1,0 +1,52 @@
+---
+- name: Execute ansible.builtin.commands and Generate HTML Report
+  hosts: all
+  gather_facts: true
+  become: yes
+
+  tasks:
+    - name: Execute df ansible.builtin.command
+      ansible.builtin.command: df -hTP | grep -v tmpfs
+      register: df_output
+
+    - name: Execute cat /etc/fstab ansible.builtin.command
+      ansible.builtin.command: cat /etc/fstab
+      register: fstab_output
+
+    - name: Execute route ansible.builtin.command
+      ansible.builtin.command: route -n
+      register: route_output
+
+    - name: Execute uname ansible.builtin.command
+      ansible.builtin.command: uname -a
+      register: uname_output
+
+    - name: Execute pvs ansible.builtin.command
+      ansible.builtin.command: pvs
+      register: pvs_output
+
+    - name: Execute vgs ansible.builtin.command
+      ansible.builtin.command: vgs
+      register: vgs_output
+
+    - name: Execute lvs ansible.builtin.command
+      ansible.builtin.command: lvs
+      register: lvs_output
+
+    - name: Execute lsblk ansible.builtin.command
+      ansible.builtin.command: lsblk
+      register: lsblk_output
+
+    - name: Execute lsblk -f ansible.builtin.command
+      ansible.builtin.command: lsblk -f
+      register: lsblk_f_output
+
+  handlers:
+    - name: Generate HTML Report
+      block:
+        - name: Create HTML template
+          template:
+            src: report_template.html.j2
+            dest: /tmp/generated_report.html
+          delegate_to: "{{ inventory_hostname }}"
+      always_run: true
