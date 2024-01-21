@@ -52,4 +52,4 @@
         force: true
       vars:
         command_outputs: "{{ command_outputs.results }}"
-        command_outputs_json: "{{ command_outputs | to_json }}"
+      loop: "{{ command_outputs }}"
