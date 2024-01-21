@@ -13,61 +13,120 @@
 <body>
   <h1>Command Outputs Report</h1>
 
-  <!-- Command: df -hTP -->
   <div class="output-box">
     <h2>df -hTP</h2>
     <pre>{{ df_output.stdout | default('Command failed or produced no output') }}</pre>
   </div>
 
-  <!-- Command: cat /etc/fstab -->
   <div class="output-box">
     <h2>cat /etc/fstab</h2>
     <pre>{{ fstab_output.stdout | default('Command failed or produced no output') }}</pre>
   </div>
 
-  <!-- Command: route -n -->
   <div class="output-box">
     <h2>route -n</h2>
     <pre>{{ route_output.stdout | default('Command failed or produced no output') }}</pre>
   </div>
 
-  <!-- Command: uname -a -->
   <div class="output-box">
     <h2>uname -a</h2>
     <pre>{{ uname_output.stdout | default('Command failed or produced no output') }}</pre>
   </div>
 
-  <!-- Command: pvs -->
   <div class="output-box">
     <h2>pvs</h2>
     <pre>{{ pvs_output.stdout | default('Command failed or produced no output') }}</pre>
   </div>
 
-  <!-- Command: vgs -->
   <div class="output-box">
     <h2>vgs</h2>
     <pre>{{ vgs_output.stdout | default('Command failed or produced no output') }}</pre>
   </div>
 
-  <!-- Command: lvs -->
   <div class="output-box">
     <h2>lvs</h2>
     <pre>{{ lvs_output.stdout | default('Command failed or produced no output') }}</pre>
   </div>
 
-  <!-- Command: lsblk -->
   <div class="output-box">
     <h2>lsblk</h2>
     <pre>{{ lsblk_output.stdout | default('Command failed or produced no output') }}</pre>
   </div>
 
-  <!-- Command: lsblk -f -->
   <div class="output-box">
     <h2>lsblk -f</h2>
     <pre>{{ lsblk_f_output.stdout | default('Command failed or produced no output') }}</pre>
   </div>
 
-  <!-- Add more sections for other commands... -->
+  <div class="output-box">
+    <h2>mount</h2>
+    <pre>{{ mount_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>cat /etc/resolv.conf</h2>
+    <pre>{{ resolv_conf_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>cat /etc/hosts</h2>
+    <pre>{{ hosts_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>ip a</h2>
+    <pre>{{ ip_a_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>cat /etc/os-release</h2>
+    <pre>{{ os_release_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>clustat</h2>
+    <pre>{{ clustat_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>pcs status</h2>
+    <pre>{{ pcs_status_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>ps -ef | grep -i pmon</h2>
+    <pre>{{ ps_pmon_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>dmidecode -t1</h2>
+    <pre>{{ dmidecode_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>multipath -ll</h2>
+    <pre>{{ multipath_ll_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>multipath -ll  | grep -i SYMMETRIX | wc -l</h2>
+    <pre>{{ multipath_symmetrix_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+  <div class="output-box">
+    <h2>cat /proc/net/bonding/bond0</h2>
+    <pre>{{ bonding_bond0_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+    <div class="output-box">
+    <h2>cat /proc/net/bonding/bond1</h2>
+    <pre>{{ bonding_bond1_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
+
+    <div class="output-box">
+    <h2>cat /proc/net/bonding/bond2</h2>
+    <pre>{{ bonding_bond2_output.stdout | default('Command failed or produced no output') }}</pre>
+  </div>
 
 </body>
 </html>
