@@ -21,15 +21,13 @@
         - cat /etc/resolv.conf
         - cat /etc/hosts
         - ip a
-        - cat /etc/os*release
+        - cat /etc/os-release
         - clustat
         - pcs status
         - ps -ef | grep -i pmon
         - dmidecode -t1
-        - cat /etc/os-release
         - multipath -ll
         - multipath -ll | grep -i SYMMETRIX | wc -l
-        - ip a
         - cat /proc/net/bonding/bond0
         - cat /proc/net/bonding/bond1
         - cat /proc/net/bonding/bond2
@@ -49,5 +47,5 @@
 
     - name: Generate HTML Report
       ansible.builtin.template:
-        src: report_template.html.j2
+        src: report_template1.html.j2
         dest: /tmp/generated_report.html
