@@ -49,3 +49,5 @@
       ansible.builtin.template:
         src: report_template1.html.j2
         dest: /tmp/generated_report.html
+      vars:
+        command_outputs: "{{ command_outputs.results | map(attribute='stdout') | list }}"
