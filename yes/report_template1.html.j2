@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Command Outputs Report</title>
+  <title>Ansible Playbook Report</title>
   <style>
-    .output-box {
-      border: 1px solid #ddd;
-      padding: 10px;
-      margin-bottom: 20px;
+    table {
+      border-collapse: collapse;
+      width: 100%;
     }
-    .success {
-      color: green;
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
     }
-    .failure {
-      color: red;
+    th {
+      background-color: #4CAF50;
+      color: white;
     }
+    tr:nth-child(even) {background-color: #f2f2f2;}
   </style>
 </head>
 <body>
-  <h1>Command Outputs Report</h1>
-
-  {% for result in command_outputs %}
-    <div class="output-box {% if result.rc == 0 %}success{% else %}failure{% endif %}">
-      <h2>{{ command_outputs.item }}</h2>
-      {% if command_outputs.rc == 0 %}
-        <pre>{{ command_outputs.stdout | default('Command produced no output') }}</pre>
-      {% else %}
-        <pre>{{ command_outputs.stderr | default('Command failed or produced no output') }}</pre>
-      {% endif %}
-    </div>
+  <h1>Ansible Playbook Report</h1>
+  {% for command in command_outputs %}
+    <h2>{{ command.item }}</h2>
+    {% if command.rc == 0 %}
+      <pre>{{ command.stdout }}</pre>
+    {% else %}
+      <pre style="color: red">{{ command.stderr }}</pre>
+    {% endif %}
   {% endfor %}
-
 </body>
 </html>
