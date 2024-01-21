@@ -21,12 +21,13 @@
 </head>
 <body>
   <h1>Ansible Playbook Report</h1>
-  {% for command in command_outputs %}
-    <h2>{{ command.item }}</h2>
-    {% if command.rc == 0 %}
-      <pre>{{ command.stdout }}</pre>
+  {% for command in command_outputs_json %}
+    {% set command_dict = command | from_json %}
+    <h2>{{ command_dict.item }}</h2>
+    {% if command_dict.rc == 0 %}
+      <pre>{{ command_dict.stdout }}</pre>
     {% else %}
-      <pre style="color: red">{{ command.stderr }}</pre>
+      <pre style="color: red">{{ command_dict.stderr }}</pre>
     {% endif %}
   {% endfor %}
 </body>
