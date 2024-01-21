@@ -1,0 +1,53 @@
+---
+- name: Execute ansible.builtin.shells and Generate HTML Report
+  hosts: all
+  gather_facts: true
+  become: yes
+  ignore_errors: true
+  tasks:
+    - name: Execute commands and print output
+      ansible.builtin.shell: "{{ item }}"
+      loop:
+        - df -hTP | grep -v tmpfs
+        - cat /etc/fstab
+        - route -n
+        - uname -a
+        - pvs
+        - vgs
+        - lvs
+        - lsblk
+        - lsblk -f
+        - mount
+        - cat /etc/resolv.conf
+        - cat /etc/hosts
+        - ip a
+        - cat /etc/os*release
+        - clustat
+        - pcs status
+        - ps -ef | grep -i pmon
+        - dmidecode -t1
+        - cat /etc/os-release
+        - multipath -ll
+        - multipath -ll | grep -i SYMMETRIX | wc -l
+        - ip a
+        - cat /proc/net/bonding/bond0
+        - cat /proc/net/bonding/bond1
+        - cat /proc/net/bonding/bond2
+      register: command_outputs
+
+    - name: Check command success and print error message if any
+      debug:
+        msg: "{{ item.stderr }}"
+      loop: "{{ command_outputs.results }}"
+      when: item.rc != 0
+
+    - name: Debug successful command output
+      debug:
+        msg: "{{ item.stdout }}"
+      loop: "{{ command_outputs.results }}"
+      when: item.rc == 0
+
+    - name: Generate HTML Report
+      ansible.builtin.template:
+        src: report_template.html.j2
+        dest: /tmp/generated_report.html
