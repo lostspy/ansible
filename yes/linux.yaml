@@ -2,7 +2,7 @@
 - name: Execute ansible.builtin.shells and Generate HTML Report
   hosts: all
   gather_facts: true
-  become: yes
+  become: true
   ignore_errors: true
   tasks:
     - name: Execute df ansible.builtin.shell
@@ -40,7 +40,67 @@
     - name: Execute lsblk -f ansible.builtin.shell
       ansible.builtin.shell: lsblk -f
       register: lsblk_f_output
-      
+
+    - name: Execute mount ansible.builtin.shell
+      ansible.builtin.shell: mount
+      register: mount_output
+
+    - name: Execute cat /etc/resolv.conf ansible.builtin.shell
+      ansible.builtin.shell: cat /etc/resolv.conf
+      register: resolv_conf_output
+
+    - name: Execute cat /etc/hosts ansible.builtin.shell
+      ansible.builtin.shell: cat /etc/hosts
+      register: etc_hosts_output
+
+    - name: Execute ip a ansible.builtin.shell
+      ansible.builtin.shell: ip a
+      register: ip_a_output
+
+    - name: Execute cat /etc/os*release ansible.builtin.shell
+      ansible.builtin.shell: cat /etc/os-release
+      register: os_release_output
+
+    - name: Execute clustat ansible.builtin.shell
+      ansible.builtin.shell: clustat
+      register: clustat_output
+
+    - name: Execute pcs status ansible.builtin.shell
+      ansible.builtin.shell: pcs status
+      register: pcs_status_output
+
+    - name: Execute ps -ef | grep -i pmon ansible.builtin.shell
+      ansible.builtin.shell: ps -ef | grep -i pmon
+      register: pmon_output
+
+    - name: Execute dmidecode -t1 ansible.builtin.shell
+      ansible.builtin.shell: dmidecode -t1
+      register: dmidecode_output
+
+    - name: Execute multipath -ll ansible.builtin.shell
+      ansible.builtin.shell: multipath -ll
+      register: multipath_output
+
+    - name: Execute multipath -ll | grep -i SYMMETRIX | wc -l ansible.builtin.shell
+      ansible.builtin.shell: multipath -ll | grep -i SYMMETRIX | wc -l
+      register: symmetrix_count_output
+
+    - name: Execute ip a ansible.builtin.shell
+      ansible.builtin.shell: ip a
+      register: ip_a_output
+
+    - name: Execute cat /proc/net/bonding/bond0 ansible.builtin.shell
+      ansible.builtin.shell: cat /proc/net/bonding/bond0
+      register: bonding_bond0_output
+
+    - name: Execute cat /proc/net/bonding/bond1 ansible.builtin.shell
+      ansible.builtin.shell: cat /proc/net/bonding/bond1
+      register: bonding_bond1_output
+
+    - name: Execute cat /proc/net/bonding/bond2 ansible.builtin.shell
+      ansible.builtin.shell: cat /proc/net/bonding/bond2
+      register: bonding_bond2_output
+
     - name: Generate HTML Report
       ansible.builtin.template:
         src: report_template.html.j2
