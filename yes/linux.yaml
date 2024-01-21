@@ -1,44 +1,44 @@
 ---
-- name: Execute ansible.builtin.commands and Generate HTML Report
+- name: Execute ansible.builtin.shells and Generate HTML Report
   hosts: all
   gather_facts: true
   become: yes
 
   tasks:
-    - name: Execute df ansible.builtin.command
-      ansible.builtin.command: df -hTP | grep -v tmpfs
+    - name: Execute df ansible.builtin.shell
+      ansible.builtin.shell: df -hTP | grep -v tmpfs
       register: df_output
 
-    - name: Execute cat /etc/fstab ansible.builtin.command
-      ansible.builtin.command: cat /etc/fstab
+    - name: Execute cat /etc/fstab ansible.builtin.shell
+      ansible.builtin.shell: cat /etc/fstab
       register: fstab_output
 
-    - name: Execute route ansible.builtin.command
-      ansible.builtin.command: route -n
+    - name: Execute route ansible.builtin.shell
+      ansible.builtin.shell: route -n
       register: route_output
 
-    - name: Execute uname ansible.builtin.command
-      ansible.builtin.command: uname -a
+    - name: Execute uname ansible.builtin.shell
+      ansible.builtin.shell: uname -a
       register: uname_output
 
-    - name: Execute pvs ansible.builtin.command
-      ansible.builtin.command: pvs
+    - name: Execute pvs ansible.builtin.shell
+      ansible.builtin.shell: pvs
       register: pvs_output
 
-    - name: Execute vgs ansible.builtin.command
-      ansible.builtin.command: vgs
+    - name: Execute vgs ansible.builtin.shell
+      ansible.builtin.shell: vgs
       register: vgs_output
 
-    - name: Execute lvs ansible.builtin.command
-      ansible.builtin.command: lvs
+    - name: Execute lvs ansible.builtin.shell
+      ansible.builtin.shell: lvs
       register: lvs_output
 
-    - name: Execute lsblk ansible.builtin.command
-      ansible.builtin.command: lsblk
+    - name: Execute lsblk ansible.builtin.shell
+      ansible.builtin.shell: lsblk
       register: lsblk_output
 
-    - name: Execute lsblk -f ansible.builtin.command
-      ansible.builtin.command: lsblk -f
+    - name: Execute lsblk -f ansible.builtin.shell
+      ansible.builtin.shell: lsblk -f
       register: lsblk_f_output
       
     - name: Generate HTML Report
