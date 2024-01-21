@@ -21,11 +21,11 @@
 
   {% for result in command_outputs %}
     <div class="output-box {% if result.rc == 0 %}success{% else %}failure{% endif %}">
-      <h2>{{ result.item }}</h2>
-      {% if result.rc == 0 %}
-        <pre>{{ result.stdout | default('Command produced no output') }}</pre>
+      <h2>{{ command_outputs.item }}</h2>
+      {% if command_outputs.rc == 0 %}
+        <pre>{{ command_outputs.stdout | default('Command produced no output') }}</pre>
       {% else %}
-        <pre>{{ result.stderr | default('Command failed or produced no output') }}</pre>
+        <pre>{{ command_outputs.stderr | default('Command failed or produced no output') }}</pre>
       {% endif %}
     </div>
   {% endfor %}
