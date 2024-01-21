@@ -13,11 +13,18 @@
 <body>
   <h1>Command Outputs Report</h1>
 
-  {% for command, output in command_outputs.items() %}
-    <div class="output-box">
-      <h2>{{ command }}</h2>
-      <pre>{{ output.stdout | default('Command failed or produced no output') }}</pre>
-    </div>
+  {% for result in command_outputs %}
+    {% if result.rc == 0 %}
+      <div class="output-box">
+        <h2>{{ result.item }}</h2>
+        <pre>{{ result.stdout | default('Command produced no output') }}</pre>
+      </div>
+    {% else %}
+      <div class="output-box" style="color: red;">
+        <h2>{{ result.item }}</h2>
+        <pre>{{ result.stderr | default('Command failed or produced no output') }}</pre>
+      </div>
+    {% endif %}
   {% endfor %}
 
 </body>
