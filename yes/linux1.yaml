@@ -52,4 +52,4 @@
         force: true
       vars:
         command_outputs: "{{ command_outputs.results }}"
-      loop: "{{ command_outputs }}"
+      loop: "{{ command_outputs.stdout_lines }}"
