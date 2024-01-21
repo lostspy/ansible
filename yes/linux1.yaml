@@ -53,5 +53,3 @@
       vars:
         command_outputs: "{{ command_outputs.results }}"
         command_outputs_json: "{{ command_outputs | to_json }}"
-      filters:
-        - from_json
