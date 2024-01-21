@@ -42,6 +42,6 @@
       register: lsblk_f_output
       
     - name: Generate HTML Report
-      template:
+      ansible.builtin.template:
         src: report_template.html.j2
         dest: /tmp/generated_report.html
