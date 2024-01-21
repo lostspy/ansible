@@ -8,23 +8,26 @@
       padding: 10px;
       margin-bottom: 20px;
     }
+    .success {
+      color: green;
+    }
+    .failure {
+      color: red;
+    }
   </style>
 </head>
 <body>
   <h1>Command Outputs Report</h1>
 
   {% for result in command_outputs %}
-    {% if result.rc == 0 %}
-      <div class="output-box">
-        <h2>{{ result.item }}</h2>
+    <div class="output-box {% if result.rc == 0 %}success{% else %}failure{% endif %}">
+      <h2>{{ result.item }}</h2>
+      {% if result.rc == 0 %}
         <pre>{{ result.stdout | default('Command produced no output') }}</pre>
-      </div>
-    {% else %}
-      <div class="output-box" style="color: red;">
-        <h2>{{ result.item }}</h2>
+      {% else %}
         <pre>{{ result.stderr | default('Command failed or produced no output') }}</pre>
-      </div>
-    {% endif %}
+      {% endif %}
+    </div>
   {% endfor %}
 
 </body>
