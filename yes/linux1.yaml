@@ -51,5 +51,5 @@
         dest: /tmp/generated_report.html
         force: true
       vars:
-        command_outputs: "{{ command_outputs.results }}"
-      loop: "{{ command_outputs.stdout_lines }}"
+        command_outputs: "{{ command_outputs.results.stdout_lines }}"
+      loop: "{{ command_outputs }}"
