@@ -24,7 +24,6 @@
       register: updates_info
 
     - name: Generate Jinja2 template
-      template:
+      ansible.windows.win_template::
         src: windows_server_info.html.j2
-        dest: /tmp/windows_server_info.html
-      delegate_to: localhost
+        dest: C:\Temp\windows_server_info.html
