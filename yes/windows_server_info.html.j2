@@ -16,17 +16,16 @@
 
 <div class="info-box">
     <h2>CPU Information</h2>
-    <p>Name: {{ cpu_info.stdout_lines[2] }}</p>
+    <p>Name: {{ cpu_info.stdout_lines[1] }}</p>
 </div>
 
 <div class="info-box">
     <h2>Memory Information</h2>
-    <p>Total Memory: {{ memory_info.stdout_lines[2] }} GB</p>
+    <p>Total Memory: {{ memory_info.stdout_lines[1] }} GB</p>
 </div>
 
 <div class="info-box">
     <h2>Windows Version Information</h2>
-    <p>Caption: {{ windows_info.stdout_lines[2] }}</p>
     <p>Version: {{ windows_info.stdout_lines[3] }}</p>
 </div>
 
