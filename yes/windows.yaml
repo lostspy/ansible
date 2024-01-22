@@ -1,0 +1,30 @@
+---
+- name: Fetch Windows Server Information
+  hosts: all
+  gather_facts: false  # We don't need to gather facts since we are using ansible.windows.win_shell
+
+  tasks:
+    - name: Get CPU information
+      ansible.windows.win_shell: Get-WmiObject -Class Win32_Processor | Select-Object Name
+      register: cpu_info
+
+    - name: Get Memory information
+      ansible.windows.win_shell: Get-WmiObject -Class Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum | Select-Object @{Name='TotalMemoryGB'; Expression={$_.Sum / 1GB}}
+      register: memory_info
+
+    - name: Get Windows version
+      ansible.windows.win_shell: Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object Caption, Version
+      register: windows_info
+
+    - name: Search-only, return list of found updates (if any), log to C:\ansible_wu.txt
+      ansible.windows.win_updates:
+        category_names: SecurityUpdates
+        state: searched
+        log_path: C:\ansible_wu.txt
+      register: updates_info
+
+    - name: Generate Jinja2 template
+      template:
+        src: windows_server_info.html.j2
+        dest: /tmp/windows_server_info.html
+      delegate_to: localhost
