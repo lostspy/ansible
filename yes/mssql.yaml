@@ -1,0 +1,11 @@
+---
+- name: testing mssql connectivity
+  hosts: all
+  vars:
+    ansible_connection: winrm
+    ansible_winrm_transport: ntlm
+    ansible_port: 5985
+    ansible_winrm_server_cert_validation: ignore
+  tasks:
+    - name: testing the server connectivity
+      ansible.windows.win_command: sqlcmd -?
