@@ -8,4 +8,4 @@
     ansible_winrm_server_cert_validation: ignore
   tasks:
     - name: testing the server connectivity
-      ansible.windows.win_command: sqlcmd -?
+      ansible.windows.win_command: sqlcmd -d TutorialDB -Q "SELECT * FROM dbo.Customers"
