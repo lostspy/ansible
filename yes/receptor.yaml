@@ -1,35 +1,40 @@
 ---
-- name: restoring receptor configuration
+- name: Restoring receptor configuration
   hosts: all
   become: true
   tasks:
-    - name: stop the receptor service
+    - name: Stop the receptor service
       ansible.builtin.service:
         name: receptor
         state: stopped
-    
-    - name: check receptor-c2.tar.gz file existsts
+
+    - name: Check if receptor-c2.tar.gz file exists
       ansible.builtin.stat:
         path: /root/receptor-c2.tar.gz
       register: receptor_exists
-    
-    - name: delete all the receptor files recursively when file exists
+
+    - name: Find all files in the target directory
+      ansible.builtin.find:
+        paths: /etc/receptor
+        recurse: yes
+        file_type: file
+      register: files_to_delete
+
+    - name: Delete each file
       ansible.builtin.file:
-        path: /etc/receptor
+        path: "{{ item.path }}"
         state: absent
-        recurse: true
-      when: receptor_exists.stat.exists == true
+      with_items: "{{ files_to_delete.files }}"
+      when: receptor_exists.stat.exists
 
-    - name:  unarchive receptor-c2.tar.gz files in /etc/receptor
-      community.general.unarchive:
-        path: /root/receptor-c2.tar.gz
-        dest: /etc/receptor/
+    # using builtin instead of community
+    - name: Unarchive receptor-c2.tar.gz files in /etc/receptor
+      ansible.builtin.shell: tar -xvzf /root/receptor-c2.tar.gz -C /etc/receptor/
       register: unarch
-      when: receptor_exists.stat.exists == true
+      when: receptor_exists.stat.exists
 
-    - name: restart the receptor if unarchive is successfull
+    - name: Restart the receptor if unarchive is successful
       ansible.builtin.service:
         name: receptor
         state: restarted
-      when: unarch.changed == true
-    
+      when: unarch.changed
