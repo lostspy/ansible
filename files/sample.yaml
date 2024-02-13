@@ -1,0 +1,32 @@
+---
+- name: Search and Print Hostnames
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Read data from cache file
+      slurp:
+        src: cache.yaml
+      register: cache_data
+
+    - name: Load cache data
+      set_fact:
+        hostnames: "{{ (cache_data.content | b64decode | from_yaml) }}"
+
+    - name: set input variable
+      set_fact:
+        input_number: "{{ value }}"
+
+    - name: Nullify hostnames
+      set_fact:
+        matching_hostnames: []
+
+    - name: Find matching hostnames
+      loop: "{{ hostnames.keys() }}"
+      set_fact:
+        matching_hostnames: "{{ matching_hostnames + [item] }}"
+      when: input_number in hostnames[item]
+
+    - name: Print matching hostnames
+      debug:
+        var: matching_hostnames
