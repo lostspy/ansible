@@ -1,0 +1,28 @@
+---
+- name: Check if /etc/receptor directory exists and take backup
+  hosts: all
+  gather_facts: yes
+  become: true
+  vars:
+    env: charlie
+  tasks:
+    - name: Check if /etc/receptor directory exists
+      stat:
+        path: /etc/receptor
+      register: receptor_dir
+
+    # using builtin instead of community
+    - name: Take backup if directory exists
+      command:
+        cmd: "tar -cvzf /root/receptor-{{ env }}.tar.gz /etc/receptor"
+      when: receptor_dir.stat.exists
+
+    - name: Verify backup size
+      stat:
+        path: "/root/receptor-{{ env }}.tar.gz"
+      register: backup_file
+
+    - name: Display backup size
+      debug:
+        msg: "Backup size: {{ backup_file.stat.size }} bytes"
+      when: backup_file.stat.exists
