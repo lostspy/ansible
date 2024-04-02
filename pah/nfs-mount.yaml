@@ -26,22 +26,12 @@
       loop: "{{ directories }}"
       register: directory_status
 
-    - name: Retry creating directories until all are available
-      file:
-        path: "{{ item.item }}"
-        state: directory
-        mode: '0755'
-      loop: "{{ create_directory_result.results }}"
-      when: not directory_status.results[loop.index0].stat.exists
-      retries: 5
-      delay: 5
-
     - name: Add fstab entries
       blockinfile:
         path: /etc/fstab
         block: |
-          node-0.ansibledemo.lab.psi.pnq2.redhat.com:/nfs /var/lib/pulp nfs defaults,_netdev,nosharecache 0 0
-          node-0.ansibledemo.lab.psi.pnq2.redhat.com:/nfs/pulpcore_static /var/lib/pulp/pulpcore_static nfs defaults,_netdev,nosharecache,context="system_u:object_r:httpd_sys_content_rw_t:s0" 0 0
+          node-0.ansibledemo.lab.upshift.rdu2.redhat.com:/nfs /var/lib/pulp nfs defaults,_netdev,nosharecache 0 0
+          node-0.ansibledemo.lab.upshift.rdu2.redhat.com:/nfs/pulpcore_static /var/lib/pulp/pulpcore_static nfs defaults,_netdev,nosharecache,context="system_u:object_r:httpd_sys_content_rw_t:s0" 0 0
         state: present
         create: yes
 

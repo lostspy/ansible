@@ -8,7 +8,7 @@
     - name: Stop services
       systemd:
         name: "{{ item }}"
-        state: start
+        state: stopped
         enabled: no
       loop:
         - pulpcore.service
@@ -27,10 +27,10 @@
     ansible_user: quickcluster
   tasks:
     - name: Take a backup of /etc/pulp directory
-      command: sudo tar cvfp /var/lib/pulp/etc_pulp.tar -C /etc/pulp .
+      shell: sudo tar cvfp /var/lib/pulp/etc_pulp.tar -C /etc/pulp .
 
     - name: Take a backup of /var/lib/pulp directory
-      command: sudo tar cvfp /var/lib/pulp/var_lib_pulp.tar -C /var/lib/pulp .
+      shell: sudo tar cvfp /var/lib/pulp/var_lib_pulp.tar -C /var/lib/pulp .
 
     - name: Check if /etc/pulp backup file exists
       stat:
@@ -59,12 +59,14 @@
     ansible_user: quickcluster
   tasks:
     - name: Take a backup of automationhub database
-      command: sudo -u postgres pg_dump -d automationhub > /tmp/automationhub.dump
+      shell: sudo -u postgres pg_dump -d automationhub > /tmp/automationhub.dump
+      become_user: root
 
     - name: Copy backup to /var/lib/pulp directory
       copy:
         src: /tmp/automationhub.dump
         dest: /var/lib/pulp/
+        remote_src: true
 
     - name: Check if backup file exists in /var/lib/pulp
       stat:

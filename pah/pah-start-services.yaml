@@ -1,15 +1,15 @@
 ---
-- name: Stop services on PAH nodes
-  hosts: all
-  gather_facts: yes
-  become: yes
+- name: Start services on PAH nodes
+  hosts: dc-pah
+  gather_facts: true
+  become: true
   vars:
     ansible_user: 'quickcluster'
   tasks:
-    - name: Stop services
+    - name: Start services
       systemd:
         name: "{{ item }}"
-        state: start
+        state: started
         enabled: no
       loop:
         - pulpcore.service
@@ -19,4 +19,4 @@
         - pulpcore-worker@2.service
         - nginx.service
         - redis.service
-      ignore_errors: yes
+      ignore_errors: true

@@ -1,34 +1,42 @@
 ---
 - name: Perform tasks on PostgreSQL node in DR region
   hosts: dr-db
-  become: yes
+  become: true
+  become_user: root
+  ignore_errors: true
   vars:
     ansible_user: 'quickcluster'
   tasks:
+    - name: Terminate active sessions using the database
+      shell: sudo -u postgres psql -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'automationhub' AND pid <> pg_backend_pid();"
+      become_user: root
+      ignore_errors: true
+
     - name: Drop the automationhub database
-      command: sudo -u postgres psql -c "DROP DATABASE IF EXISTS automationhub"
-      ignore_errors: yes
+      shell: sudo -u postgres psql -c "DROP DATABASE IF EXISTS automationhub"
+      become_user: root
 
     - name: Create the automationhub database
-      command: sudo -u postgres psql -c "CREATE DATABASE automationhub WITH OWNER automationhub"
-      
+      shell: sudo -u postgres psql -c "CREATE DATABASE automationhub WITH OWNER automationhub"
+      become_user: root
+
     - name: Restore database export from primary site
-      command: sudo -u postgres psql -U automationhub -d automationhub < /var/lib/pulp/automationhub.dump
+      shell: sudo -u postgres psql -d automationhub < /var/lib/pulp/automationhub.dump
+      become_user: root
 
-
----
 - name: Perform tasks on PostgreSQL node in DR region
   hosts: dr-pah
-  become: yes
+  become: true
+  become_user: root
   vars:
     ansible_user: 'quickcluster'
   tasks:
     - name: Restore pulp content
-      command: tar -xvpf /var/lib/pulp/etc_pulp.tar -C /etc/pulp
+      shell: tar -xvpf /var/lib/pulp/etc_pulp.tar -C /etc/pulp
       ignore_errors: yes
 
     - name: Restore pulp content
-      command: tar -xvpf /var/lib/pulp/var_lib_pulp.tar -C /var/lib/pulp
+      shell: tar -xvpf /var/lib/pulp/var_lib_pulp.tar -C /var/lib/pulp
       ignore_errors: yes
 
     - name: Start services
