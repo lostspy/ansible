@@ -29,6 +29,26 @@
     - name: Take a backup of /var/lib/pulp directory
       command: sudo tar cvfp /var/lib/pulp/var_lib_pulp-dr-01.tar -C /var/lib/pulp .
 
+    - name: Check if /etc/pulp backup file exists
+      stat:
+        path: /var/lib/pulp/etc_pulp-dr-01.tar
+      register: etc_pulp_backup_status
+
+    - name: Check if /var/lib/pulp backup file exists
+      stat:
+        path: /var/lib/pulp/var_lib_pulp-dr-01.tar
+      register: var_lib_pulp_backup_status
+
+    - name: Print message if /etc/pulp backup file exists
+      debug:
+        msg: "/etc/pulp backup file {{ etc_pulp_backup_status.stat.path }} exists."
+      when: etc_pulp_backup_status.stat.exists
+
+    - name: Print message if /var/lib/pulp backup file exists
+      debug:
+        msg: "/var/lib/pulp backup file {{ var_lib_pulp_backup_status.stat.path }} exists."
+      when: var_lib_pulp_backup_status.stat.exists
+
 - name: Backup automationhub database dump
   hosts: dr-db
   become: yes
@@ -40,5 +60,15 @@
 
     - name: Copy backup to /var/lib/pulp directory
       copy:
-        src: /tmp/automationhub.dump
+        src: /tmp/automationhub-dr-01.dump
         dest: /var/lib/pulp/
+
+    - name: Check if backup file exists in /var/lib/pulp
+      stat:
+        path: /var/lib/pulp/automationhub-dr-01.dump
+      register: backup_file_status
+
+    - name: Print message if backup file exists
+      debug:
+        msg: "Backup file {{ backup_file_status.stat.path }} exists."
+      when: backup_file_status.stat.exists
