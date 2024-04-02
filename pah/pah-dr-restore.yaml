@@ -1,0 +1,80 @@
+---
+- name: Perform tasks on PostgreSQL node in DR region
+  hosts: dr-pah
+  become: true
+  become_user: root
+  vars:
+    ansible_user: 'quickcluster'
+  tasks:
+    - name: Stop services
+      become_user: root
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+        enabled: yes
+      loop:
+        - nginx
+        - pulpcore.service
+        - pulpcore-api.service
+        - pulpcore-content.service
+        - pulpcore-worker@1.service
+        - pulpcore-worker@2.service
+        - nginx.service
+        - redis.service
+
+
+- name: Perform tasks on PostgreSQL node in DR region
+  hosts: dr-db
+  become: true
+  become_user: root
+  ignore_errors: true
+  vars:
+    ansible_user: 'quickcluster'
+  tasks:
+    - name: Terminate active sessions using the database
+      shell: sudo -u postgres psql -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'automationhub' AND pid <> pg_backend_pid();"
+      become_user: root
+      ignore_errors: true
+
+    - name: Drop the automationhub database
+      shell: sudo -u postgres psql -c "DROP DATABASE IF EXISTS automationhub"
+      become_user: root
+
+    - name: Create the automationhub database
+      shell: sudo -u postgres psql -c "CREATE DATABASE automationhub WITH OWNER automationhub"
+      become_user: root
+
+    - name: Restore database export from primary site
+      shell: sudo -u postgres psql -d automationhub < /var/lib/pulp/automationhub-dr-01.dump
+      become_user: root
+
+- name: Perform tasks on PostgreSQL node in DR region
+  hosts: dr-pah
+  become: true
+  become_user: root
+  vars:
+    ansible_user: 'quickcluster'
+  tasks:
+    - name: Restore pulp content
+      shell: tar -xvpf /var/lib/pulp/etc_pulp-dr-01.tar -C /etc/pulp
+      ignore_errors: yes
+
+    - name: Restore pulp content
+      shell: tar -xvpf /var/lib/pulp/var_lib_pulp-dr-01.tar -C /var/lib/pulp
+      ignore_errors: yes
+
+    - name: Start services
+      become_user: root
+      systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - nginx
+        - pulpcore.service
+        - pulpcore-api.service
+        - pulpcore-content.service
+        - pulpcore-worker@1.service
+        - pulpcore-worker@2.service
+        - nginx.service
+        - redis.service
