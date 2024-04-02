@@ -1,0 +1,48 @@
+---
+- name: Perform tasks on PostgreSQL node in DR region
+  hosts: dr-db
+  become: yes
+  vars:
+    ansible_user: 'quickcluster'
+  tasks:
+    - name: Drop the automationhub database
+      command: sudo -u postgres psql -c "DROP DATABASE IF EXISTS automationhub"
+      ignore_errors: yes
+
+    - name: Create the automationhub database
+      command: sudo -u postgres psql -c "CREATE DATABASE automationhub WITH OWNER automationhub"
+      
+    - name: Restore database export from primary site
+      command: sudo -u postgres psql -U automationhub -d automationhub < /var/lib/pulp/automationhub.dump
+
+
+---
+- name: Perform tasks on PostgreSQL node in DR region
+  hosts: dr-pah
+  become: yes
+  vars:
+    ansible_user: 'quickcluster'
+  tasks:
+    - name: Restore pulp content
+      command: tar -xvpf /var/lib/pulp/etc_pulp.tar -C /etc/pulp
+      ignore_errors: yes
+
+    - name: Restore pulp content
+      command: tar -xvpf /var/lib/pulp/var_lib_pulp.tar -C /var/lib/pulp
+      ignore_errors: yes
+
+    - name: Start services
+      become_user: root
+      systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - nginx
+        - pulpcore.service
+        - pulpcore-api.service
+        - pulpcore-content.service
+        - pulpcore-worker@1.service
+        - pulpcore-worker@2.service
+        - nginx.service
+        - redis.service

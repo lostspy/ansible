@@ -1,0 +1,44 @@
+---
+- name: Include and execute pah-stop-services playbook
+  hosts: dr-pah
+  become: yes
+  vars:
+    ansible_user: quickcluster
+  tasks:
+    - name: Stop services
+      systemd:
+        name: "{{ item }}"
+        state: start
+        enabled: no
+      loop:
+        - pulpcore.service
+        - pulpcore-api.service
+        - pulpcore-content.service
+        - pulpcore-worker@1.service
+        - pulpcore-worker
+
+- name: Backup dc pah nodes
+  hosts: dr-pah-1
+  become: yes
+  vars:
+    ansible_user: quickcluster
+  tasks:
+    - name: Take a backup of /etc/pulp directory
+      command: sudo tar cvfp /var/lib/pulp/etc_pulp-dr-01.tar -C /etc/pulp .
+
+    - name: Take a backup of /var/lib/pulp directory
+      command: sudo tar cvfp /var/lib/pulp/var_lib_pulp-dr-01.tar -C /var/lib/pulp .
+
+- name: Backup automationhub database dump
+  hosts: dr-db
+  become: yes
+  vars:
+    ansible_user: quickcluster
+  tasks:
+    - name: Take a backup of automationhub database
+      command: sudo -u postgres pg_dump -d automationhub > /tmp/automationhub-dr-01.dump
+
+    - name: Copy backup to /var/lib/pulp directory
+      copy:
+        src: /tmp/automationhub.dump
+        dest: /var/lib/pulp/
