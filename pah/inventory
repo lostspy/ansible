@@ -11,6 +11,7 @@ node-8.ansibledemo.lab.upshift.rdu2.redhat.com
 
 [all:vars]
 ansible_user="quickcluster"
+ACTION_WARNINGS=false
 
 [dc-pah]
 node-1.ansibledemo.lab.upshift.rdu2.redhat.com
