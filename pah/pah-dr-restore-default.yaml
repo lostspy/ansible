@@ -1,5 +1,5 @@
 ---
-- name: Perform tasks on PostgreSQL node in DR region
+- name: Stopping the services in DR region
   hosts: dr-pah
   become: true
   become_user: root
@@ -21,7 +21,6 @@
         - pulpcore-worker@2.service
         - nginx.service
         - redis.service
-
 
 - name: Perform tasks on PostgreSQL node in DR region
   hosts: dr-db
@@ -48,7 +47,7 @@
       shell: sudo -u postgres psql -d automationhub < /var/lib/pulp/automationhub-dr-01.dump
       become_user: root
 
-- name: Perform tasks on PostgreSQL node in DR region
+- name: Restore content in DR region
   hosts: dr-pah
   become: true
   become_user: root
@@ -57,10 +56,6 @@
   tasks:
     - name: Restore pulp content
       shell: tar -xvpf /var/lib/pulp/etc_pulp-dr-01.tar -C /etc/pulp
-      ignore_errors: yes
-
-    - name: Restore pulp content
-      shell: tar -xvpf /var/lib/pulp/var_lib_pulp-dr-01.tar -C /var/lib/pulp
       ignore_errors: yes
 
     - name: Start services
