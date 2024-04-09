@@ -1,0 +1,34 @@
+---
+- name: Rename backup files on remote nodes
+  hosts: ee
+  vars:
+    ansible_user: quickcluster
+    restore_env: dc
+  become: true
+  tasks:
+    - name: Check if /root/receptor-{{ restore_env }}.tar exists
+      stat:
+        path: /root/receptor-{{ restore_env }}.tar
+      register: receptor_check
+
+    - name: Stop Receptor service
+      service:
+        name: receptor
+        state: stopped
+      ignore_errors: true
+
+    - name: Remove contents of /etc/receptor directory
+      file:
+        path: /etc/receptor/*
+        state: absent
+      when: receptor_check.stat.exists
+
+    - name: Restore data based on environment
+      shell: tar -xf "/root/receptor-{{ restore_env }}.tar" -C /etc/receptor/
+      when: receptor_check.stat.exists
+
+    - name: Start Receptor service
+      service:
+        name: receptor
+        state: started
+      ignore_errors: true

@@ -1,0 +1,19 @@
+---
+- name: Rename backup files on remote nodes
+  hosts: ee
+  vars:
+    ansible_user: quickcluster
+  become: true
+  tasks:
+    - name: Rename receptor-1.tar to receptor-dc.tar
+      command: mv /root/receptor-1.tar /root/receptor-dc.tar
+      args:
+        creates: /root/receptor-dc.tar
+      ignore_errors: true
+
+    - name: Rename receptor-2.tar to receptor-dr.tar
+      command: mv /root/receptor-2.tar /root/receptor-dr.tar
+      args:
+        creates: /root/receptor-dr.tar
+      ignore_errors: true
+

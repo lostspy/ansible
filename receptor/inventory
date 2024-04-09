@@ -1,0 +1,16 @@
+[all]
+node-0.ansible.lab.psi.pnq2.redhat.com
+node-1.ansible.lab.psi.pnq2.redhat.com
+node-2.ansible.lab.psi.pnq2.redhat.com
+node-3.ansible.lab.psi.pnq2.redhat.com
+node-4.ansible.lab.psi.pnq2.redhat.com
+node-5.ansible.lab.psi.pnq2.redhat.com
+node-6.ansible.lab.psi.pnq2.redhat.com
+node-7.ansible.lab.psi.pnq2.redhat.com
+node-8.ansible.lab.psi.pnq2.redhat.com
+
+[ee]
+node-5.ansible.lab.psi.pnq2.redhat.com
+node-6.ansible.lab.psi.pnq2.redhat.com
+node-7.ansible.lab.psi.pnq2.redhat.com
+node-8.ansible.lab.psi.pnq2.redhat.com

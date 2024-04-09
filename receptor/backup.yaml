@@ -1,0 +1,24 @@
+---
+- name: Backup /etc/receptor directory
+  hosts: ee
+  vars:
+    ansible_user: 'quickcluster'
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Check if /etc/receptor directory exists
+      stat:
+        path: /etc/receptor
+      register: receptor_dir
+
+    - name: Enter /etc/receptor directory
+      become: true
+      command: cd /etc/receptor
+      when: receptor_dir.stat.exists
+
+    - name: Create backup of /etc/receptor directory
+      become: true
+      command: tar -cf /root/receptor-2.tar .
+      args:
+        chdir: /etc/receptor
+      when: receptor_dir.stat.exists

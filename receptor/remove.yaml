@@ -1,0 +1,17 @@
+---
+- name: Remove /etc/receptor directory if exists
+  hosts: ee
+  vars:
+    ansible_user: "quickcluster"
+  become: true
+  tasks:
+    - name: Check if /etc/receptor directory exists
+      stat:
+        path: /etc/receptor
+      register: receptor_dir
+
+    - name: Remove /etc/receptor directory and its contents
+      file:
+        path: /etc/receptor
+        state: absent
+      when: receptor_dir.stat.exists
